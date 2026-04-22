@@ -1,24 +1,33 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useDragControls } from 'motion/react';
-import { Terminal as TerminalIcon, Cpu, Github, Radio, Wind, Map, Shield, Box, Zap, Layers, Activity, ChevronUp } from 'lucide-react';
+import { Terminal as TerminalIcon, Cpu, Github, Radio, Wind, Map, Shield, Box, Zap, Layers, Activity, ChevronUp, Mail, ExternalLink, Linkedin } from 'lucide-react';
+import { LineChart, Line, AreaChart, Area, BarChart, Bar, ResponsiveContainer, YAxis } from 'recharts';
+
+// --- Contexts ---
+const ThemeContext = React.createContext<{ criticalFailure: boolean }>({ criticalFailure: false });
 
 // --- Components ---
 
 const GlitchCard = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => {
-  const [isGlitching, setIsGlitching] = useState(false);
+  const { criticalFailure } = React.useContext(ThemeContext);
+  const [isHovering, setIsHovering] = useState(false);
+  const isGlitching = criticalFailure && isHovering;
 
   return (
     <motion.div
-      onHoverStart={() => setIsGlitching(true)}
-      onHoverEnd={() => setIsGlitching(false)}
+      onHoverStart={() => setIsHovering(true)}
+      onHoverEnd={() => setIsHovering(false)}
       className={`relative overflow-hidden ${className}`}
-      animate={isGlitching ? { 
-        x: [0, -4, 4, -2, 2, 0],
-        skew: [0, 1, -1, 0.5, -0.5, 0],
-        filter: ["blur(0px)", "blur(2px)", "blur(0px)"]
-      } : {}}
     >
-      <div className="relative z-10 h-full">{children}</div>
+      <motion.div 
+        className="relative z-10 h-full"
+        animate={isGlitching ? { 
+          opacity: [1, 0.7, 1, 0.8, 1],
+        } : {}}
+        transition={{ duration: 0.3, repeat: 2 }}
+      >
+        {children}
+      </motion.div>
       
       {isGlitching && (
         <>
@@ -26,34 +35,42 @@ const GlitchCard = ({ children, className = "" }: { children: React.ReactNode, c
             {Array.from({ length: 3 }).map((_, i) => (
               <motion.div
                 key={i}
-                className="absolute w-full h-[1px] bg-red-500/30"
+                className="absolute w-full h-[1px] bg-red-500/50"
                 style={{ top: `${Math.random() * 100}%` }}
                 animate={{ x: ["-100%", "100%"] }}
-                transition={{ duration: 0.1, repeat: Infinity }}
+                transition={{ duration: 0.15, repeat: 2 }}
               />
             ))}
             {Array.from({ length: 3 }).map((_, i) => (
               <motion.div
                 key={i+3}
-                className="absolute w-full h-[1px] bg-blue-500/30"
+                className="absolute w-full h-[1px] bg-blue-500/50"
                 style={{ top: `${Math.random() * 100}%` }}
                 animate={{ x: ["100%", "-100%"] }}
-                transition={{ duration: 0.15, repeat: Infinity }}
+                transition={{ duration: 0.2, repeat: 2 }}
               />
             ))}
           </div>
 
           <motion.div 
-            className="absolute inset-0 z-0 text-[#ff0000] opacity-20 translate-x-0.5"
-            animate={{ x: [-1, 1, -1], y: [0.5, -0.5, 0.5] }}
-            transition={{ repeat: Infinity, duration: 0.2 }}
+            className="absolute inset-0 z-0 text-[#ff0000] opacity-40 pointer-events-none"
+            animate={{ 
+              opacity: [0, 0.6, 0.2, 0.6, 0],
+              x: [-3, 3, -2, 2, 0],
+              y: [1, -1, 0.5, -0.5, 0]
+            }}
+            transition={{ repeat: 2, duration: 0.3 }}
           >
             {children}
           </motion.div>
           <motion.div 
-            className="absolute inset-0 z-0 text-[#0000ff] opacity-20 -translate-x-0.5"
-            animate={{ x: [1, -1, 1], y: [-0.5, 0.5, -0.5] }}
-            transition={{ repeat: Infinity, duration: 0.2 }}
+            className="absolute inset-0 z-0 text-[#0000ff] opacity-40 pointer-events-none"
+            animate={{ 
+              opacity: [0, 0.6, 0.3, 0.6, 0],
+              x: [3, -3, 2, -2, 0],
+              y: [-1, 1, -0.5, 0.5, 0]
+            }}
+            transition={{ repeat: 2, duration: 0.3 }}
           >
             {children}
           </motion.div>
@@ -186,17 +203,21 @@ const ScanningCursor = () => {
 };
 
 const Hero = () => {
-  const [text, setText] = useState('NEKHAL JAMES');
+  const [text, setText] = useState('Nekhal James');
   const [isGlitching, setIsGlitching] = useState(false);
 
   useEffect(() => {
+    const titles = ['Nekhal James', 'AI STUDENT', 'DEVELOPER', 'IoT ENTHUSIAST'];
+    let index = 0;
+    
     const interval = setInterval(() => {
       setIsGlitching(true);
       setTimeout(() => {
-        setText(prev => (prev === 'NEKHAL JAMES' ? 'SYSTEMS DEVELOPER' : 'NEKHAL JAMES'));
+        index = (index + 1) % titles.length;
+        setText(titles[index]);
         setTimeout(() => setIsGlitching(false), 300);
       }, 300);
-    }, 5000);
+    }, 2500);
     return () => clearInterval(interval);
   }, []);
 
@@ -210,7 +231,7 @@ const Hero = () => {
   return (
     <div className="relative group max-w-4xl">
       <div className="mono text-rust mb-4 flex items-center gap-3">
-        <span>[SYSTEMS_DEVELOPER // EDGE_AI_SPECIALIST]</span>
+        <span>[AI_STUDENT // DEVELOPER // IOT_ENTHUSIAST]</span>
         {isGlitching && (
           <motion.span 
             initial={{ opacity: 0 }}
@@ -300,10 +321,6 @@ const Hero = () => {
         </motion.h1>
       </div>
 
-      <div className="sticky-note absolute -top-10 -right-20 hidden lg:block">
-        Learning and deploying<br />on the fly!
-      </div>
-
       <div className="flex gap-6 mt-8">
         <div className="flex flex-col">
           <span className="mono text-[10px] text-slate-500">QUALIFICATION</span>
@@ -384,44 +401,112 @@ const BentoGrid = () => {
   );
 };
 
+const SpaceOrbVisual = () => {
+  const [data, setData] = useState(Array.from({ length: 20 }, (_, i) => ({ time: i, velocity: 50 + Math.random() * 20, power: 30 + Math.random() * 40 })));
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setData(prev => {
+        const newData = [...prev.slice(1), { time: prev[prev.length - 1].time + 1, velocity: 50 + Math.random() * 20, power: 30 + Math.random() * 40 }];
+        return newData;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="h-full w-full opacity-60 relative overflow-hidden">
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(88,166,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(88,166,255,0.05)_1px,transparent_1px)] bg-[size:10px_10px]" />
+      <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[size:100%_4px] pointer-events-none" />
+      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+        <AreaChart data={data} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+          <defs>
+            <linearGradient id="colorVelocity" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#58a6ff" stopOpacity={0.3}/>
+              <stop offset="95%" stopColor="#58a6ff" stopOpacity={0}/>
+            </linearGradient>
+          </defs>
+          <Area type="monotone" dataKey="velocity" stroke="#58a6ff" fillOpacity={1} fill="url(#colorVelocity)" isAnimationActive={false} />
+          <Line type="monotone" dataKey="power" stroke="#b7410e" strokeWidth={1} dot={false} isAnimationActive={false} />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
+
+const FarmGridVisual = () => {
+  const [data, setData] = useState(Array.from({ length: 12 }, (_, i) => ({ id: i, sales: Math.random() * 100 })));
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setData(prev => prev.map(item => ({ ...item, sales: Math.max(10, Math.min(100, item.sales + (Math.random() - 0.5) * 30)) })));
+    }, 800);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="h-full w-full p-2 opacity-50 relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(rgba(88,166,255,0.1)_1px,transparent_1px)] bg-[size:4px_4px]" />
+      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+        <BarChart data={data} margin={{ top: 5, right: 0, left: 0, bottom: 0 }}>
+          <Bar dataKey="sales" fill="#58a6ff" isAnimationActive={true} animationDuration={600} />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
+
+const AeroCastVisual = () => {
+  const [data, setData] = useState(Array.from({ length: 15 }, (_, i) => ({ time: i, temp: 20 + Math.random() * 15, weather: Math.random() * 100 })));
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setData(prev => {
+        const last = prev[prev.length - 1];
+        return [...prev.slice(1), { time: last.time + 1, temp: 20 + Math.random() * 15, weather: Math.random() * 100 }];
+      });
+    }, 1200);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="h-full w-full opacity-40 relative overflow-hidden">
+      <div className="absolute inset-0 border border-rust/10 bg-[repeating-linear-gradient(45deg,transparent,transparent_5px,rgba(183,65,14,0.02)_5px,rgba(183,65,14,0.02)_10px)]" />
+      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+        <LineChart data={data} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+          <YAxis hide domain={[0, 100]} />
+          <Line type="stepAfter" dataKey="weather" stroke="#58a6ff" strokeWidth={1} dot={false} isAnimationActive={false} />
+          <Line type="monotone" dataKey="temp" stroke="#b7410e" strokeWidth={2} dot={true} r={1} isAnimationActive={false} />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
+
 const ProjectSection = () => {
   const projects = [
     {
       id: '001',
       title: "SPACE_ORB",
       desc: "ZERO-ANOMALY SANDBOXED AI COMPUTE",
-      visual: (
-        <div className="h-full border border-cobalt/20 bg-[repeating-linear-gradient(45deg,transparent,transparent_5px,rgba(88,166,255,0.05)_5px,rgba(88,166,255,0.05)_10px)]" />
-      )
+      visual: <SpaceOrbVisual />
     },
     {
       id: '002',
       title: "FARM_GRID",
       desc: "KERALA LOCAL LOGISTICS HUB UI",
-      visual: (
-        <div className="h-full grid grid-cols-2 gap-1 p-1 border border-cobalt/20">
-           <div className="bg-cobalt/10" />
-           <div className="bg-cobalt/10" />
-        </div>
-      )
+      visual: <FarmGridVisual />
     },
     {
       id: '003',
       title: "AERO_CAST",
       desc: "NASA_WEATHER_PROBABILITY_ENGINE",
-      visual: (
-        <div className="h-full flex items-end gap-1 border border-cobalt/20 p-2">
-           <div className="flex-1 bg-cobalt h-[40%]" />
-           <div className="flex-1 bg-cobalt h-[70%]" />
-           <div className="flex-1 bg-rust h-[90%]" />
-           <div className="flex-1 bg-cobalt h-[50%]" />
-        </div>
-      )
+      visual: <AeroCastVisual />
     }
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-full p-2">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-full p-4 pb-12">
       {projects.map((p) => (
         <GlitchCard key={p.id} className="h-full">
           <motion.div 
@@ -430,7 +515,7 @@ const ProjectSection = () => {
             className="blueprint-card group cursor-pointer hover:bg-cobalt/5 transition-colors border border-cobalt/20 h-full flex flex-col"
           >
             <div className="mono text-rust mb-2 group-hover:text-cobalt transition-colors">FILE_{p.id}: {p.title}</div>
-            <div className="flex-grow my-4 overflow-hidden relative">
+            <div className="flex-grow my-4 min-h-[120px] overflow-hidden relative">
               <div className="absolute inset-0 bg-cobalt/0 group-hover:bg-cobalt/5 transition-colors z-10" />
               {p.visual}
             </div>
@@ -558,38 +643,130 @@ const MissionWindow = ({ title, isOpen, onClose, children, icon, id, minimizedWi
 const TerminalContent = ({ onToggleCinema, onOpenWindow, onMinimizeSelf }: { onToggleCinema: (active: boolean) => void, onOpenWindow: (id: string) => void, onMinimizeSelf: () => void }) => {
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<string[]>(['Type /help to begin.']);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleCommand = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isProcessing) return;
+    
     const cmd = input.toLowerCase().trim();
     setHistory(prev => [...prev, `> ${input}`]);
 
-    if (cmd === '/riddle') {
-      setHistory(prev => [...prev, 'CINEMA_MODE_ACTIVATED: Redefining visuals...']);
-      onToggleCinema(true);
-      setTimeout(() => setHistory(prev => [...prev, 'Welcome to the Malayalam Cinema riddle environment.']), 1000);
+    if (cmd === '/excecute' || cmd === '/execute') {
+      setIsProcessing(true);
+      setHistory(prev => [...prev, 
+        'CRITICAL_COMMAND_ISSUED: Executing destructive sequence...', 
+        'WARNING: Accessing kernel level overrides...', 
+        'PROTOCOL_00_INIT: [....................] 0%'
+      ]);
+
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 4;
+        const barLength = Math.floor(progress / 5);
+        const bar = '#'.repeat(barLength).padEnd(20, '.');
+        
+        setHistory(prev => {
+          const newHistory = [...prev];
+          const lastIdx = newHistory.length - 1;
+          newHistory[lastIdx] = `PROTOCOL_00_INIT: [${bar}] ${progress}%`;
+          return newHistory;
+        });
+
+        if (progress >= 100) {
+          clearInterval(interval);
+          setHistory(prev => [...prev, 'PAYLOAD_DEPLOYED: System stability lost.', 'INITIALIZING_BLACKOUT...']);
+          setTimeout(() => {
+            onToggleCinema(true);
+            setIsProcessing(false);
+          }, 800);
+        }
+      }, 80);
+    } else if (cmd === '/cancel') {
+      setHistory(prev => [...prev, 
+        'ABORTING_SEQUENCE: Restoring system stability...', 
+        'SYNCING_SECURE_KERNEL... [OK]', 
+        'FLUSHING_CORRUPT_BUFFER... [OK]',
+        'PROTOCOL_RESET_COMPLETE.'
+      ]);
+      onToggleCinema(false);
     } else if (cmd === '/about') {
-      setHistory(prev => [...prev, 'Opening Profile Data...']);
+      setHistory(prev => [...prev, 
+        'INIT_BIO_HANDSHAKE...', 
+        'DECRYPTING_PROFILE_DATA... [OK]', 
+        'FETCHING_USER_HISTORY... [OK]',
+        'DISPLAYING_PERSONA_FILE.'
+      ]);
       onMinimizeSelf();
       onOpenWindow('about');
     } else if (cmd === '/skills') {
-      setHistory(prev => [...prev, 'Accessing Technical Ecosystem...']);
+      setHistory(prev => [...prev, 
+        'SCANNING_TECH_MODULES...', 
+        'MAPPING_SKILL_NODES... [OK]', 
+        'LINKING_ACCREDITATION_DB... [OK]',
+        'ACCESSING_TECHNICAL_ECOSYSTEM.'
+      ]);
       onMinimizeSelf();
       onOpenWindow('skills');
     } else if (cmd === '/projects') {
-      setHistory(prev => [...prev, 'Loading Mission Records...']);
+      setHistory(prev => [...prev, 
+        'LOADING_MISSION_ARCHIVE...', 
+        'CALIBRATING_DATA_VISUALIZERS... [OK]', 
+        'SYNCING_REALTIME_METRICS... [OK]',
+        'OPENING_ACTIVE_MISSIONS.'
+      ]);
       onMinimizeSelf();
       onOpenWindow('projects');
     } else if (cmd === '/connect') {
-      setHistory(prev => [...prev, 'Establishing Communication Link...']);
+      setHistory(prev => [...prev, 
+        'ESTABLISHING_COMM_LINK...', 
+        'OPENING_SECURE_MAIL_GATEWAY... [OK]', 
+        'VERIFYING_HANDSHAKE_ID... [OK]',
+        'COMMUNICATION_LINK_ESTABLISHED.'
+      ]);
       onMinimizeSelf();
       onOpenWindow('contact');
+    } else if (cmd === '/git') {
+      setHistory(prev => [...prev, 
+        'INIT_BRIDGE://GITHUB...', 
+        'PULLING_REMOTE_MANIFEST... [OK]', 
+        'SYNCING_REPOS... [OK]',
+        'EXTERNAL_NODE_ACCESSED.'
+      ]);
+      onMinimizeSelf();
+      onOpenWindow('external-github');
+    } else if (cmd === '/linkedin') {
+      setHistory(prev => [...prev, 
+        'INIT_BRIDGE://LINKEDIN...', 
+        'FETCHING_NETWORK_STATUS... [OK]', 
+        'SYNCING_PROFESSIONAL_GRAPH... [OK]',
+        'EXTERNAL_NODE_ACCESSED.'
+      ]);
+      onMinimizeSelf();
+      onOpenWindow('external-linkedin');
+    } else if (cmd === '/mail') {
+      setHistory(prev => [...prev, 
+        'INIT_BRIDGE://MAIL...', 
+        'OPENING_SMTP_ENVELOPE... [OK]', 
+        'FLUSHING_OUTBOX... [OK]',
+        'EXTERNAL_NODE_ACCESSED.'
+      ]);
+      onMinimizeSelf();
+      onOpenWindow('external-email');
     } else if (cmd === '/clear') {
       setHistory(['Terminal cleared.']);
     } else if (cmd === '/help') {
-      setHistory(prev => [...prev, 'Available: /about, /skills, /projects, /connect, /riddle, /status, /clear']);
+      setHistory(prev => [...prev, 'Available: /about, /skills, /projects, /connect, /git, /linkedin, /mail, /excecute, /cancel, /status, /clear']);
     } else if (cmd === '/status') {
-       setHistory(prev => [...prev, 'HOST: Nekhal James', 'UPTIME: 18 years 5 months', 'ARCH: ARM64/x86_64 Hybrid']);
+       setHistory(prev => [...prev, 
+         '--- SYSTEM_DIAGNOSTICS ---',
+         'HOST: Nekhaljames', 
+         'UPTIME: 18 years 5 months', 
+         'ARCH: ARM64/x86_64 Hybrid',
+         'KERNEL_INTEGRITY: SECURE',
+         'MEMORY_UTILIZATION: 42%',
+         'ACTIVE_NODES: 7/7 ONLINE'
+       ]);
     } else {
       setHistory(prev => [...prev, `Command not found: ${cmd}`]);
     }
@@ -626,7 +803,8 @@ export default function App() {
   const [focusedWindow, setFocusedWindow] = useState<string | null>(null);
   const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({});
   const [closingWindows, setClosingWindows] = useState<string[]>([]);
-  const [cinemaActive, setCinemaActive] = useState(false);
+  const [criticalFailure, setCriticalFailure] = useState(false);
+  const [blackoutStage, setBlackoutStage] = useState<'idle' | 'active' | 'recovering'>('idle');
 
   const menuItems = [
     { id: 'about', label: 'ABOUT', icon: <Activity className="w-4 h-4" /> },
@@ -635,6 +813,19 @@ export default function App() {
     { id: 'contact', label: 'REACH OUT', icon: <Radio className="w-4 h-4" /> },
     { id: 'terminal', label: 'TERMINAL', icon: <TerminalIcon className="w-4 h-4" /> },
   ];
+
+  const handleCriticalToggle = (active: boolean) => {
+    if (active) {
+      setBlackoutStage('active');
+      setTimeout(() => {
+        setCriticalFailure(true);
+        setBlackoutStage('recovering');
+        setTimeout(() => setBlackoutStage('idle'), 2000);
+      }, 3000);
+    } else {
+      setCriticalFailure(false);
+    }
+  };
 
   const handleMenuClick = (id: string) => {
     setFocusedWindow(id);
@@ -686,14 +877,19 @@ export default function App() {
   };
 
   return (
-    <main className={`mission-control-grid selection:bg-cobalt selection:text-black transition-all duration-1000 ${cinemaActive ? 'hue-rotate-90 contrast-125' : ''}`}>
-      <ScanningCursor />
+    <ThemeContext.Provider value={{ criticalFailure }}>
+      <main className={`mission-control-grid selection:bg-cobalt selection:text-black transition-all duration-1000 ${criticalFailure ? 'critical-failure' : ''}`}>
+        <ScanningCursor />
 
       {/* HEADER BAR */}
       <header className="grid-cell col-span-3 flex justify-between items-center px-6 border-b border-cobalt">
         <div className="mono flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-cobalt shadow-[0_0_8px_#58a6ff] animate-pulse" />
-          SYSTEM_STATE: OPERATIONAL
+          <div className={`w-2 h-2 rounded-full shadow-[0_0_8px_currentColor] animate-pulse ${criticalFailure ? 'bg-red-600' : 'bg-cobalt'}`} />
+          {criticalFailure ? (
+            <span className="text-red-600 font-bold animate-pulse">SYSTEM_FAILURE: KERNEL_PANIC_STATE</span>
+          ) : (
+            'SYSTEM_STATE: OPERATIONAL'
+          )}
         </div>
         <div className="mono hidden md:block">
           COORD: 9.9312° N, 76.2673° E (KOCHI)
@@ -711,7 +907,7 @@ export default function App() {
             <button
               key={item.id}
               onClick={() => handleMenuClick(item.id)}
-              className={`mono text-[10px] flex flex-col items-center gap-2 p-3 border border-transparent hover:border-cobalt/40 hover:bg-cobalt/5 transition-all group ${activeWindows.includes(item.id) && !minimizedWindows.includes(item.id) ? 'bg-cobalt/10 border-cobalt/50 text-white' : ''}`}
+              className={`mono text-[10px] flex flex-col items-center gap-2 p-3 transition-all group ${activeWindows.includes(item.id) && !minimizedWindows.includes(item.id) ? 'text-white' : 'text-cobalt/60'}`}
             >
               <div className="group-hover:scale-110 transition-transform relative">
                 {item.icon}
@@ -764,8 +960,8 @@ export default function App() {
                <Github className="w-16 h-16 opacity-20" />
             </div>
             <div className="space-y-4">
-              <h2 className="text-4xl font-extrabold text-white">NEKHAL JAMES</h2>
-              <p className="mono text-rust text-sm">Systems Developer | Edge AI Enthusiast | Hardware Architect</p>
+              <h2 className="text-4xl font-extrabold text-white uppercase tracking-tighter">Nekhaljames</h2>
+              <p className="mono text-rust text-sm">AI Student | Developer | IoT Enthusiast</p>
               <p className="text-slate-400 font-mono text-sm leading-relaxed">
                 St. Joseph's College of Engineering and Technology (SJCET), Palai. 
                 Focusing on bridging the gap between low-level hardware architecture and high-level AI systems. 
@@ -804,35 +1000,132 @@ export default function App() {
         zIndex={90 + activeWindows.indexOf('skills')}
         icon={<Cpu className="w-5 h-5 text-cobalt" />}
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
-          <div className="space-y-6">
-            <h3 className="mono text-rust text-lg">PRO_STACK</h3>
-            <div className="grid grid-cols-2 gap-4">
-              {['Rust', 'Python', 'C/C++', 'TypeScript', 'Java', 'RISC-V'].map(s => (
-                <GlitchCard key={s}>
-                  <div className="flex justify-between items-center p-3 bg-white/5 border-l border-cobalt/40 h-full">
-                    <span className="text-sm">{s}</span>
-                  </div>
-                </GlitchCard>
-              ))}
-            </div>
+        <div className="flex flex-col gap-10 pt-4">
+          {/* Top Level Telemetry */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+             <div className="p-4 border border-cobalt/20 bg-cobalt/5 mono flex flex-col justify-between">
+                <div className="text-[10px] opacity-40">OVERALL_COMPETENCY</div>
+                <div className="text-2xl font-bold flex items-end gap-1">
+                   94.2 <span className="text-[10px] text-rust mb-1">%</span>
+                </div>
+                <div className="h-1 bg-cobalt/10 w-full mt-2">
+                   <motion.div initial={{ width: 0 }} animate={{ width: '94.2%' }} className="h-full bg-cobalt" />
+                </div>
+             </div>
+             <div className="p-4 border border-cobalt/20 bg-cobalt/5 mono flex flex-col justify-between">
+                <div className="text-[10px] opacity-40">ACTIVE_RESOURCES</div>
+                <div className="text-2xl font-bold flex items-end gap-1">
+                   11 <span className="text-[10px] text-rust mb-1">NODES</span>
+                </div>
+                <div className="text-[9px] text-cobalt/60 mt-2">All subsystems operational.</div>
+             </div>
+             <div className="p-4 border border-cobalt/20 bg-cobalt/5 mono flex flex-col justify-between relative overflow-hidden">
+                <div className="text-[10px] opacity-40">SYNC_STATUS</div>
+                <div className="text-sm font-bold text-green-500 animate-pulse">OPTIMIZED (L1_CACHE)</div>
+                <div className="absolute right-[-10%] bottom-[-20%] scale-150 opacity-10">
+                   <Activity className="w-20 h-20" />
+                </div>
+             </div>
           </div>
-          <div className="space-y-6">
-            <h3 className="mono text-cobalt text-lg">SYSTEMS_INTELLIGENCE</h3>
-            <div className="grid grid-cols-1 gap-2">
-              {[
-                { n: 'YOLOv8 Vision', d: 'Inferencing at the Edge' },
-                { n: 'OpenCV', d: 'Complex Image Processing' },
-                { n: 'RocksDB', d: 'High-Performance Persistent Store' },
-                { n: 'Zenoh (QUIC)', d: 'Low-Latency Distribution' }
-              ].map(s => (
-                <GlitchCard key={s.n}>
-                  <div className="p-3 bg-white/5 border border-white/10 h-full">
-                     <div className="text-sm font-bold">{s.n}</div>
-                     <div className="mono text-[10px] opacity-50">{s.d}</div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* COLUMN 1: LANGUAGES */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 border-b border-rust/40 pb-2">
+                <div className="w-1.5 h-4 bg-rust" />
+                <h3 className="mono text-rust text-lg font-bold">PRO_STACK</h3>
+              </div>
+              <div className="grid grid-cols-1 gap-3">
+                {[
+                  { n: 'Rust', p: 95, color: 'bg-rust' },
+                  { n: 'Python', p: 90, color: 'bg-cobalt' },
+                  { n: 'C/C++', p: 85, color: 'bg-cobalt' },
+                  { n: 'TypeScript', p: 92, color: 'bg-cobalt' },
+                  { n: 'Java', p: 75, color: 'bg-cobalt' },
+                  { n: 'RISC-V ASM', p: 80, color: 'bg-rust' }
+                ].map(s => (
+                  <GlitchCard key={s.n}>
+                    <div className="p-4 bg-white/5 border border-white/5 flex flex-col gap-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-bold">{s.n}</span>
+                        <span className="mono text-[9px] opacity-60">{s.p}%</span>
+                      </div>
+                      <div className="flex gap-1 h-[3px]">
+                         {Array.from({ length: 10 }).map((_, i) => (
+                           <motion.div 
+                              key={i}
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: i < s.p / 10 ? 1 : 0.1 }}
+                              transition={{ delay: i * 0.05 }}
+                              className={`flex-1 ${s.color}`}
+                           />
+                         ))}
+                      </div>
+                    </div>
+                  </GlitchCard>
+                ))}
+              </div>
+            </div>
+
+            {/* COLUMN 2: HARDWARE & EDGE */}
+            <div className="space-y-6">
+               <div className="flex items-center gap-2 border-b border-cobalt/40 pb-2">
+                 <div className="w-1.5 h-4 bg-cobalt" />
+                 <h3 className="mono text-cobalt text-lg font-bold">SYSTEM_INTEL</h3>
+               </div>
+               <div className="space-y-3">
+                 {[
+                   { n: 'YOLOv8 Vision', d: 'Edge-AI object detection pipelines' },
+                   { n: 'OpenCV', d: 'Compute vision & neural mapping' },
+                   { n: 'Raspberry Pi', d: 'High-performance SBC integration' },
+                   { n: 'Networking', d: 'Distributed systems & communication' },
+                   { n: 'IoT Architecture', d: 'Hardware-to-cloud integration' }
+                 ].map(s => (
+                   <GlitchCard key={s.n}>
+                     <div className="p-4 bg-white/5 border border-white/5 group">
+                        <div className="text-sm font-bold group-hover:text-cobalt transition-colors">{s.n}</div>
+                        <div className="mono text-[10px] opacity-50 mt-1 leading-tight">{s.d}</div>
+                     </div>
+                   </GlitchCard>
+                 ))}
+               </div>
+            </div>
+
+            {/* COLUMN 3: DEPLOYMENT & TOOLS */}
+            <div className="space-y-6">
+               <div className="flex items-center gap-2 border-b border-slate-500/40 pb-2">
+                 <div className="w-1.5 h-4 bg-slate-500" />
+                 <h3 className="mono text-slate-500 text-lg font-bold">INFRA_STACK</h3>
+               </div>
+               <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { n: 'Linux Kernel', i: <Cpu /> },
+                    { n: 'Docker', i: <Box /> },
+                    { n: 'Git Control', i: <Github /> },
+                    { n: 'QUIC/UDP', i: <Activity /> },
+                    { n: 'ESP32/AVR', i: <Cpu /> },
+                    { n: 'Vite/React', i: <Box /> }
+                  ].map(s => (
+                    <GlitchCard key={s.n}>
+                       <div className="p-3 bg-white/5 border border-white/5 flex flex-col items-center gap-2 text-center h-full">
+                          <div className="opacity-40 text-xs">{s.i}</div>
+                          <div className="mono text-[9px] uppercase font-bold">{s.n}</div>
+                       </div>
+                    </GlitchCard>
+                  ))}
+               </div>
+
+               <div className="mt-8 p-4 border border-rust/10 bg-rust/5 rounded relative overflow-hidden">
+                  <div className="mono text-[9px] text-rust mb-2 font-bold tracking-widest">CURRENT_RESEARCH_VEC</div>
+                  <div className="text-[11px] opacity-80 leading-relaxed font-mono italic">
+                     Exploring High-Performance Computing (HPC) bridges for distributed AI inference on RISC-V architectures.
                   </div>
-                </GlitchCard>
-              ))}
+                  <div className="absolute top-0 right-0 p-1">
+                     <motion.div animate={{ rotate: 360 }} transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}>
+                        <TerminalIcon className="w-8 h-8 opacity-5 text-rust" />
+                     </motion.div>
+                  </div>
+               </div>
             </div>
           </div>
         </div>
@@ -852,20 +1145,69 @@ export default function App() {
         zIndex={90 + activeWindows.indexOf('projects')}
         icon={<Box className="w-5 h-5 text-cobalt" />}
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-           {[
-             { t: 'SpaceOrb (V7.6 Node)', d: 'Aerospace-grade data management system designed for Space Data Centers with 90-minute communication blackouts.' },
-             { t: 'Thalam', d: 'AI-powered cultural intelligence platform for mapping Kerala traditions via "Cultural DNA Engine".' },
-             { t: 'FarmGrid', d: 'Full-stack marketplace connecting local Kerala farmers with logistics hub networks.' },
-             { t: 'AeroCast', d: 'Weather probability analyzer using 40 years of NASA POWER API data.' }
-           ].map(p => (
-             <GlitchCard key={p.t}>
-               <div className="p-6 blueprint-card hover:bg-cobalt/5 transition-all h-full">
-                  <h4 className="text-xl font-bold text-white mb-2">{p.t}</h4>
-                  <p className="mono text-[11px] opacity-60 leading-relaxed">{p.d}</p>
-               </div>
+        <div className="flex flex-col gap-8 pt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+             {[
+               { 
+                 t: 'SpaceOrb (V7.6 Node)', 
+                 d: 'Aerospace-grade data management system designed for Space Data Centers with 90-minute communication blackouts.',
+                 tags: ['RUST', 'QUIC', 'ROCKSDB'],
+                 id: 'MISSION_SO_76',
+                 color: 'border-cobalt'
+               },
+               { 
+                 t: 'Thalam AI', 
+                 d: 'AI-powered cultural intelligence platform for mapping Kerala traditions via "Cultural DNA Engine".',
+                 tags: ['NEURAL_MAP', 'PYTHON', 'D3.JS'],
+                 id: 'MISSION_TH_01',
+                 color: 'border-rust'
+               },
+               { 
+                 t: 'FarmGrid', 
+                 d: 'Full-stack marketplace connecting local Kerala farmers with logistics hub networks.',
+                 tags: ['VITE', 'REACT', 'GO'],
+                 id: 'MISSION_FG_88',
+                 color: 'border-slate-500'
+               },
+               { 
+                 t: 'AeroCast', 
+                 d: 'Weather probability analyzer using 40 years of NASA POWER API data.',
+                 tags: ['DATA_OPS', 'API_INTEG', 'HPC'],
+                 id: 'MISSION_AC_22',
+                 color: 'border-cobalt'
+               }
+             ].map(p => (
+               <GlitchCard key={p.t}>
+                 <div className={`p-6 blueprint-card hover:bg-white/5 transition-all h-full flex flex-col gap-4 border-l-2 ${p.color}`}>
+                    <div className="flex justify-between items-start">
+                       <h4 className="text-xl font-black text-white tracking-tighter uppercase">{p.t}</h4>
+                       <span className="mono text-[8px] opacity-40">{p.id}</span>
+                    </div>
+                    <p className="mono text-[11px] opacity-60 leading-relaxed flex-grow">{p.d}</p>
+                    <div className="flex gap-2 min-h-6">
+                       {p.tags.map(tag => (
+                         <span key={tag} className="mono text-[8px] px-2 py-0.5 bg-white/5 border border-white/10 opacity-70">
+                           {tag}
+                         </span>
+                       ))}
+                    </div>
+                 </div>
+               </GlitchCard>
+             ))}
+          </div>
+
+          <div className="flex justify-center pt-6 border-t border-white/5">
+             <GlitchCard>
+                <button 
+                  onClick={() => handleMenuClick('external-github')}
+                  className="px-10 py-5 bg-cobalt/10 border border-cobalt/40 hover:bg-cobalt/20 hover:border-cobalt transition-all mono text-sm font-bold flex items-center gap-3 group"
+                >
+                  <Box className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+                  ACCESS_ALL_REPOSITORIES
+                  <div className="text-[10px] bg-cobalt/20 px-2 py-0.5 ml-2">GITHUB.EXE</div>
+                </button>
              </GlitchCard>
-           ))}
+          </div>
         </div>
       </MissionWindow>
 
@@ -889,15 +1231,36 @@ export default function App() {
              <p className="mono text-rust">Secure Handshake Protocol Mandatory</p>
            </div>
            <div className="flex flex-wrap justify-center gap-6">
-              {[
-                { l: 'nekhaljames@gmail.com', i: <Radio className="w-4 h-4" /> },
-                { l: 'GitHub/nekhaljames', i: <Github className="w-4 h-4" /> },
-                { l: 'LinkedIn/nekhaljames', i: <Activity className="w-4 h-4" /> }
-              ].map(c => (
-                <button key={c.l} className="px-6 py-4 border border-cobalt/30 hover:border-cobalt bg-cobalt/5 mono text-xs transition-all hover:scale-105">
-                  {c.l}
+              <GlitchCard>
+                <button 
+                  onClick={() => handleMenuClick('external-email')}
+                  className="px-8 py-6 border border-cobalt/30 hover:border-cobalt bg-cobalt/5 mono text-xs transition-all hover:scale-105 flex flex-col items-center gap-3 w-48"
+                >
+                  <Mail className="w-6 h-6 text-rust" />
+                  <span>ENCRYPTED_MAIL</span>
+                  <div className="text-[9px] opacity-40 uppercase truncate w-full">nekhaljames@gmail.com</div>
                 </button>
-              ))}
+              </GlitchCard>
+              <GlitchCard>
+                <button 
+                  onClick={() => handleMenuClick('external-github')}
+                  className="px-8 py-6 border border-cobalt/30 hover:border-cobalt bg-cobalt/5 mono text-xs transition-all hover:scale-105 flex flex-col items-center gap-3 w-48"
+                >
+                  <Github className="w-6 h-6 text-cobalt" />
+                  <span>GITHUB_NODE</span>
+                  <div className="text-[9px] opacity-40 uppercase">Nekhal-james</div>
+                </button>
+              </GlitchCard>
+              <GlitchCard>
+                <button 
+                  onClick={() => handleMenuClick('external-linkedin')}
+                  className="px-8 py-6 border border-cobalt/30 hover:border-cobalt bg-cobalt/5 mono text-xs transition-all hover:scale-105 flex flex-col items-center gap-3 w-48"
+                >
+                  <Linkedin className="w-6 h-6 text-cobalt" />
+                  <span>LINKEDIN_SYNC</span>
+                  <div className="text-[9px] opacity-40 uppercase">nekhal-james</div>
+                </button>
+              </GlitchCard>
            </div>
         </div>
       </MissionWindow>
@@ -917,7 +1280,7 @@ export default function App() {
         icon={<TerminalIcon className="w-5 h-5 text-cobalt" />}
       >
         <TerminalContent 
-          onToggleCinema={setCinemaActive} 
+          onToggleCinema={handleCriticalToggle} 
           onOpenWindow={handleMenuClick}
           onMinimizeSelf={() => handleMinimize('terminal')}
         />
@@ -975,6 +1338,223 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      <MissionWindow 
+        id="external-github"
+        title="EXTERNAL_NODE://GITHUB.COM/NEKHAL-JAMES" 
+        isOpen={activeWindows.includes('external-github')} 
+        onClose={() => handleClose('external-github')}
+        onMinimize={handleMinimize}
+        minimizedWindows={minimizedWindows}
+        isLoading={loadingStates['external-github']}
+        isClosing={closingWindows.includes('external-github')}
+        isFocused={focusedWindow === 'external-github'}
+        onFocus={() => handleFocus('external-github')}
+        zIndex={90 + activeWindows.indexOf('external-github')}
+        icon={<Github className="w-5 h-5 text-cobalt" />}
+      >
+        <div className="p-12 flex flex-col items-center justify-center h-full space-y-8 text-center bg-[radial-gradient(circle_at_center,rgba(88,166,255,0.05)_0%,transparent_70%)]">
+           <div className="relative">
+              <Github className="w-20 h-20 text-cobalt opacity-20" />
+              <motion.div 
+                animate={{ scale: [1, 1.2, 1], opacity: [0.2, 1, 0.2] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <div className="w-10 h-10 border border-cobalt rounded-full" />
+              </motion.div>
+           </div>
+           
+           <div className="space-y-6">
+              <div className="space-y-2">
+                <h3 className="text-2xl font-bold tracking-tighter uppercase">LINK_ESTABLISHED: GITHUB</h3>
+                <div className="mono text-cobalt text-xs animate-pulse">NODE_STATUS: DISCOVERABLE</div>
+              </div>
+
+              <div className="py-4 border-y border-cobalt/20">
+                <div className="mono text-[10px] opacity-40 mb-1">REPOSITORY_OWNER:</div>
+                <div className="text-3xl md:text-5xl font-black text-white tracking-tighter uppercase selection:bg-cobalt selection:text-black">
+                  Nekhal-james
+                </div>
+              </div>
+
+              <p className="mono text-xs opacity-60 max-w-md mx-auto leading-relaxed">
+                External tunneling restricted by provider security protocols. 
+                Execute the navigation command below to sync with the primary GitHub node.
+              </p>
+
+              <GlitchCard className="mt-8">
+                <a 
+                  href="https://github.com/Nekhal-james" 
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-block px-12 py-5 bg-cobalt/10 border border-cobalt/40 hover:bg-cobalt/20 hover:border-cobalt transition-all mono text-sm font-bold shadow-[0_0_20px_rgba(88,166,255,0.1)]"
+                >
+                  EXECUTE: OPEN_IN_NEW_TAB
+                </a>
+              </GlitchCard>
+           </div>
+        </div>
+      </MissionWindow>
+
+      <MissionWindow 
+        id="external-linkedin"
+        title="EXTERNAL_NODE://LINKEDIN.COM/IN/NEKHAL-JAMES" 
+        isOpen={activeWindows.includes('external-linkedin')} 
+        onClose={() => handleClose('external-linkedin')}
+        onMinimize={handleMinimize}
+        minimizedWindows={minimizedWindows}
+        isLoading={loadingStates['external-linkedin']}
+        isClosing={closingWindows.includes('external-linkedin')}
+        isFocused={focusedWindow === 'external-linkedin'}
+        onFocus={() => handleFocus('external-linkedin')}
+        zIndex={90 + activeWindows.indexOf('external-linkedin')}
+        icon={<Linkedin className="w-5 h-5 text-cobalt" />}
+      >
+        <div className="p-12 flex flex-col items-center justify-center h-full space-y-8 text-center bg-[radial-gradient(circle_at_center,rgba(88,166,255,0.05)_0%,transparent_70%)]">
+           <div className="relative">
+              <Linkedin className="w-20 h-20 text-cobalt opacity-20" />
+              <motion.div 
+                animate={{ scale: [1, 1.2, 1], opacity: [0.2, 1, 0.2] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <div className="w-10 h-10 border border-cobalt rounded-full" />
+              </motion.div>
+           </div>
+           
+           <div className="space-y-6">
+              <div className="space-y-2">
+                <h3 className="text-2xl font-bold tracking-tighter uppercase">LINK_ESTABLISHED: LINKEDIN</h3>
+                <div className="mono text-cobalt text-xs animate-pulse">CONNECTION_STRENGTH: HIGH</div>
+              </div>
+
+              <div className="py-4 border-y border-cobalt/20">
+                <div className="mono text-[10px] opacity-40 mb-1">PROFILE_IDENTIFIER:</div>
+                <div className="text-3xl md:text-5xl font-black text-white tracking-tighter uppercase selection:bg-cobalt selection:text-black">
+                  nekhal-james
+                </div>
+              </div>
+
+              <p className="mono text-xs opacity-60 max-w-md mx-auto leading-relaxed">
+                LinkedIn protocol prevents secure embedding.
+                Execute the external synchronization command below to view the full profile node.
+              </p>
+
+              <GlitchCard className="mt-8">
+                <a 
+                  href="https://www.linkedin.com/in/nekhal-james/" 
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-block px-12 py-5 bg-cobalt/10 border border-cobalt/40 hover:bg-cobalt/20 hover:border-cobalt transition-all mono text-sm font-bold shadow-[0_0_20px_rgba(88,166,255,0.1)]"
+                >
+                  EXECUTE: OPEN_IN_NEW_TAB
+                </a>
+              </GlitchCard>
+           </div>
+        </div>
+      </MissionWindow>
+
+      <MissionWindow 
+        id="external-email"
+        title="COMMUNICATION_TERMINAL://NEKHALJAMES@GMAIL.COM" 
+        isOpen={activeWindows.includes('external-email')} 
+        onClose={() => handleClose('external-email')}
+        onMinimize={handleMinimize}
+        minimizedWindows={minimizedWindows}
+        isLoading={loadingStates['external-email']}
+        isClosing={closingWindows.includes('external-email')}
+        isFocused={focusedWindow === 'external-email'}
+        onFocus={() => handleFocus('external-email')}
+        zIndex={90 + activeWindows.indexOf('external-email')}
+        icon={<Mail className="w-5 h-5 text-rust" />}
+      >
+        <div className="p-12 flex flex-col items-center justify-center h-full space-y-8 text-center bg-[radial-gradient(circle_at_center,rgba(255,87,34,0.05)_0%,transparent_70%)]">
+           <div className="relative">
+              <Mail className="w-20 h-20 text-rust opacity-20" />
+              <motion.div 
+                animate={{ scale: [1, 1.2, 1], opacity: [0.2, 1, 0.2] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <div className="w-10 h-10 border border-rust rounded-full" />
+              </motion.div>
+           </div>
+           <div className="space-y-6">
+              <div className="space-y-2">
+                <h3 className="text-2xl font-bold tracking-tighter">INITIATE DIRECT COMMS</h3>
+                <div className="mono text-cobalt text-xs animate-pulse">HANDSHAKE_ID: NKJ_99_SECURE</div>
+              </div>
+
+              <div className="py-4 border-y border-rust/20">
+                <div className="mono text-[10px] opacity-40 mb-1">TARGET_DESTINATION:</div>
+                <div className="text-3xl md:text-4xl font-black text-white tracking-tight break-all selection:bg-rust selection:text-white">
+                  nekhaljames@gmail.com
+                </div>
+              </div>
+
+              <p className="mono text-xs opacity-60 max-w-md mx-auto leading-relaxed">
+                System is ready to transmit data packet to the specified primary node.
+                Execute the mailto Protocol by clicking the command below.
+              </p>
+
+              <GlitchCard className="mt-8">
+                <a 
+                  href="mailto:nekhaljames@gmail.com" 
+                  className="inline-block px-12 py-5 bg-rust/10 border border-rust/40 hover:bg-rust/20 hover:border-rust transition-all mono text-sm font-bold shadow-[0_0_20px_rgba(255,87,34,0.1)]"
+                >
+                  EXECUTE: MAILTO_PROTOCOL
+                </a>
+              </GlitchCard>
+           </div>
+        </div>
+      </MissionWindow>
+
+      {/* BLACKOUT_OVERLAY */}
+      <AnimatePresence>
+        {blackoutStage !== 'idle' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[99999] bg-black flex flex-col items-center justify-center p-6 text-center"
+          >
+            {blackoutStage === 'active' && (
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="space-y-6"
+              >
+                <div className="text-red-600 text-3xl md:text-5xl font-black tracking-tight mb-4 animate-pulse">
+                  CRITICAL_SYSTEM_FAILURE
+                </div>
+                <div className="mono text-red-500 text-xl tracking-[0.2em]">
+                  KERNEL_PANIC_0xFF00AD // CORE_DUMP_PROCEEDING
+                </div>
+                <div className="w-64 h-1 bg-red-900/40 relative mx-auto overflow-hidden mt-8">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: "100%" }}
+                    transition={{ duration: 3, ease: "linear" }}
+                    className="absolute h-full bg-red-600 shadow-[0_0_15px_#ff0000]"
+                  />
+                </div>
+              </motion.div>
+            )}
+            {blackoutStage === 'recovering' && (
+               <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0, 1, 0, 1, 0] }}
+                  transition={{ duration: 0.5, repeat: 4 }}
+                  className="mono text-red-600 font-bold"
+               >
+                 SYSTEM_MUTATING... RELOADING_AS_PANIC_NODE_01
+               </motion.div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
+  </ThemeContext.Provider>
   );
 }

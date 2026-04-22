@@ -38,7 +38,7 @@
 .mission-control-grid {
   display: grid;
   grid-template-columns: 80px 1fr 300px;
-  grid-template-rows: 60px 1fr 200px;
+  grid-template-rows: 60px 1fr 280px;
   gap: 1px;
   background-color: rgba(88,166,255,0.1);
   height: 100vh;
@@ -90,4 +90,54 @@
   transform: rotate(5deg);
   box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
   border-radius: 2px;
+}
+
+.critical-failure {
+  --color-cobalt: #ff0000 !important;
+  --color-cobalt-dim: rgba(255, 0, 0, 0.1) !important;
+  --color-rust: #ff5555 !important;
+}
+
+.critical-failure .mono {
+  color: #ff0000 !important;
+}
+
+.critical-failure .mission-control-grid {
+  background-color: rgba(255, 0, 0, 0.2) !important;
+}
+
+.critical-failure [class*="border-cobalt"] {
+  border-color: rgba(255, 0, 0, 0.4) !important;
+}
+
+.critical-failure [class*="bg-cobalt"] {
+  background-color: rgba(255, 0, 0, 0.2) !important;
+}
+
+.critical-failure [class*="text-cobalt"] {
+  color: #ff0000 !important;
+}
+
+.critical-failure [class*="text-rust"] {
+  color: #ff5555 !important;
+}
+
+.critical-failure::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 0, 0, 0.05);
+  pointer-events: none;
+  z-index: 9999;
+  box-shadow: inset 0 0 100px rgba(255, 0, 0, 0.2);
+  animation: glitch-overlay 0.2s infinite;
+}
+
+@keyframes glitch-overlay {
+  0% { background: rgba(255, 0, 0, 0.05); }
+  50% { background: rgba(255, 0, 0, 0.1); }
+  100% { background: rgba(255, 0, 0, 0.05); }
 }

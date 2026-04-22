@@ -1,9 +1,10 @@
-# Nekhal James - Portfolio
+# 🚀 Mission Control: Nekhaljames Portfolio
 
+![Silicon Obsidian Aesthetic](https://raw.githubusercontent.com/lucide-react/lucide/main/icons/terminal.svg)
 
 > **[STATUS: OPERATIONAL]** // **[ARCH: EDGE_AI_SYSTEMS]**
 
-A high-performance, single-page "Mission Control" interface built for **Nekhal James**, a B.Tech Computer Science (AI) student specializing in Hardware Architecture, Edge AI, and Systems Development.
+A high-performance, single-page "Mission Control" interface built for **Nekhaljames**, an **AI Student**, **Developer**, and **IoT Enthusiast** specializing in Hardware Architecture and Edge AI systems.
 
 This portfolio is not just a website; it's a simulated operating environment—**"Silicon Obsidian"**—designed to reflect the complexity and precision of low-level systems engineering.
 
@@ -43,6 +44,31 @@ This portfolio is not just a website; it's a simulated operating environment—*
 
 ---
 
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js (v18+)
+- npm / yarn
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/nekhaljames/mission-control-portfolio.git
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Launch the environment**
+   ```bash
+   npm run dev
+   ```
+   The system will be operational at `http://localhost:3000`.
+
+---
 
 ## 🎨 Design Philosophy: "Silicon Obsidian"
 
@@ -55,8 +81,8 @@ The design prioritizes **high-density data** and **architectural honesty**.
 
 ## 👨‍💻 Developed By
 
-**Nekhal James**
-*B.Tech CS (AI) Student*
+**Nekhaljames**
+*AI Student | Developer | IoT Enthusiast*
 
 ---
 
