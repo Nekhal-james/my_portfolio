@@ -482,7 +482,7 @@ const Hero = () => {
         <div className="w-px h-8 bg-cobalt/20" />
         <div className="flex flex-col">
           <span className="mono text-[10px] text-slate-500">SPECIALIZATION</span>
-          <span className="text-sm font-bold">HARDWARE ARCHITECTURE</span>
+          <span className="text-sm font-bold">AI BASED IOT</span>
         </div>
       </div>
     </div>
@@ -708,8 +708,8 @@ const MissionWindow = ({ title, isOpen, onClose, children, icon, id, minimizedWi
   return (
     <AnimatePresence mode="wait">
       <div 
-        className={`fixed flex items-center justify-center pointer-events-none ${isMaximized ? 'inset-0' : 'inset-4 md:inset-6 py-[70px] md:py-0'}`}
-        style={{ zIndex }}
+        className={`fixed flex items-center justify-center pointer-events-none transition-all duration-500 ${isMaximized ? 'inset-0 z-[10000]' : 'inset-0 md:inset-6 py-[70px] md:py-0'}`}
+        style={{ zIndex: isMaximized ? 10000 : zIndex }}
       >
         <motion.div
           key={`${id}-${resetTrigger}`} // Force re-render at center on reset
@@ -723,11 +723,11 @@ const MissionWindow = ({ title, isOpen, onClose, children, icon, id, minimizedWi
             opacity: 1, 
             scale: 1, 
             y: 0,
-            borderColor: isFocused ? "rgba(88,166,255,0.6)" : "rgba(88,166,255,0.3)",
-            boxShadow: isFocused ? "0 0 30px rgba(88,166,255,0.15)" : "0 0 10px rgba(0,0,0,0.5)"
+            borderColor: isMaximized ? "transparent" : (isFocused ? "rgba(88,166,255,0.6)" : "rgba(88,166,255,0.3)"),
+            boxShadow: isMaximized ? "none" : (isFocused ? "0 0 30px rgba(88,166,255,0.15)" : "0 0 10px rgba(0,0,0,0.5)")
           }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          className={`bg-obsidian border rounded-lg overflow-hidden flex flex-col transition-all duration-300 pointer-events-auto ${isMaximized ? 'w-full h-full' : 'w-full max-w-4xl max-h-[75vh] md:max-h-[80vh]'}`}
+          className={`bg-obsidian border flex flex-col transition-all duration-300 pointer-events-auto ${isMaximized ? 'w-screen h-screen border-none rounded-none' : 'w-full max-w-4xl max-h-[75vh] md:max-h-[80vh] rounded-lg'}`}
         >
           <div 
             onPointerDown={(e) => {
@@ -793,14 +793,14 @@ const MissionWindow = ({ title, isOpen, onClose, children, icon, id, minimizedWi
                <div className={`w-1.5 h-1.5 rounded-full ${isLoading ? 'bg-cobalt/20' : isFocused ? 'bg-cobalt shadow-[0_0_8px_#58a6ff]' : 'bg-cobalt/40'}`} />
             </div>
           </div>
-          <div className="flex-grow overflow-auto p-8 relative min-h-[300px]">
-            {isLoading && <BootSequence title={title} />}
-            {isClosing && <ShutdownSequence />}
-            
-            <div className="blueprint-line w-full top-10 left-0 border-t opacity-10" />
-            <div className="blueprint-line h-full left-10 top-0 border-l opacity-10" />
-            <div className={(isLoading || isClosing) ? 'opacity-0 pointer-events-none transition-all duration-300' : 'transition-all duration-500'}>
-              {children}
+          <div className={`flex-grow overflow-auto relative min-h-[300px] ${isMaximized ? 'p-4 md:p-12 bg-black/40' : 'p-8'}`}>
+            <div className={`w-full ${isMaximized ? 'max-w-5xl mx-auto min-h-full flex flex-col justify-center' : ''}`}>
+              {isLoading && <BootSequence title={title} />}
+              {isClosing && <ShutdownSequence />}
+              
+              <div className={(isLoading || isClosing) ? 'opacity-0 pointer-events-none transition-all duration-300' : 'transition-all duration-500'}>
+                {children}
+              </div>
             </div>
           </div>
         </motion.div>
@@ -1334,7 +1334,7 @@ export default function App() {
             <GlitchCard>
               <div className="p-4 bg-white/5 border border-white/5 h-full">
                  <span className="mono text-[10px] text-slate-500">RESIDENCE</span>
-                 <div className="text-sm">Kottayam, Kerala 686121</div>
+                 <div className="text-sm">Idukki, Kerala</div>
               </div>
             </GlitchCard>
             <GlitchCard>
