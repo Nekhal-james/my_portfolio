@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useDragControls } from 'motion/react';
 import { Terminal as TerminalIcon, Cpu, Github, Radio, Wind, Map, Shield, Box, Zap, Layers, Activity, ChevronUp } from 'lucide-react';
+import { Analytics } from '@vercel/analytics/react';
 
 // --- Components ---
 
@@ -975,6 +976,7 @@ export default function App() {
           </div>
         </div>
       </footer>
+      <Analytics />
     </main>
   );
 }
