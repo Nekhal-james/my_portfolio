@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { motion, AnimatePresence, useDragControls } from 'motion/react';
 import { Terminal as TerminalIcon, Cpu, Github, Radio, Wind, Map, Shield, Box, Zap, Layers, Activity, ChevronUp, Mail, ExternalLink, Linkedin, Move, Flower, Flower2 } from 'lucide-react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, ResponsiveContainer, YAxis } from 'recharts';
+import { Analytics } from '@vercel/analytics/react';
 
 // --- Contexts ---
 type ThemeMode = 'obsidian' | 'critical' | 'happy' | 'flower' | 'day' | 'dev';
@@ -1962,6 +1963,7 @@ export default function App() {
         )}
       </AnimatePresence>
     </main>
+    <Analytics />
   </ThemeContext.Provider>
   );
 }
