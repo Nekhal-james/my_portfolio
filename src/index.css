@@ -37,14 +37,21 @@
 
 .mission-control-grid {
   display: grid;
-  grid-template-columns: 80px 1fr 300px;
-  grid-template-rows: 60px 1fr 280px;
+  grid-template-columns: 1fr;
+  grid-template-rows: 60px 1fr 60px; /* Mobile: Header, Hero, Taskbar */
   gap: 1px;
   background-color: rgba(88,166,255,0.1);
   height: 100vh;
   width: 100vw;
   position: relative;
   z-index: 1;
+}
+
+@media (min-width: 1024px) {
+  .mission-control-grid {
+    grid-template-columns: 80px 1fr 300px;
+    grid-template-rows: 60px 1fr 280px;
+  }
 }
 
 .grid-cell {
@@ -120,6 +127,46 @@
 
 .critical-failure [class*="text-rust"] {
   color: #ff5555 !important;
+}
+
+.happy-theme {
+  --color-cobalt: #fbbf24 !important; /* amber-400 */
+  --color-cobalt-dim: rgba(251, 191, 36, 0.1) !important;
+  --color-rust: #d97706 !important; /* amber-600 */
+  --color-obsidian: #1e1b02 !important;
+  background-image: radial-gradient(circle, rgba(251, 191, 36, 0.1) 1px, transparent 1px) !important;
+}
+
+.day-theme {
+  --color-obsidian: #f8fafc !important; /* slate-50 */
+  --color-text: #0f172a !important; /* slate-900 */
+  --color-cobalt: #0284c7 !important; /* sky-600 */
+  --color-cobalt-dim: rgba(2, 132, 199, 0.1) !important;
+  --color-rust: #ea580c !important; /* orange-600 */
+  background-image: radial-gradient(circle, rgba(2, 132, 199, 0.1) 1px, transparent 1px) !important;
+}
+
+.day-theme .grid-cell {
+  background-color: #ffffff !important;
+  border-color: rgba(2, 132, 199, 0.1) !important;
+}
+
+.day-theme .mission-control-grid {
+  background-color: rgba(2, 132, 199, 0.05) !important;
+}
+
+.flower-theme {
+  --color-cobalt: #a855f7 !important; /* purple-500 */
+  --color-cobalt-dim: rgba(168, 85, 247, 0.1) !important;
+  --color-rust: #ec4899 !important; /* pink-500 */
+  background-image: radial-gradient(circle, rgba(168, 85, 247, 0.1) 1px, transparent 1px) !important;
+}
+
+.dev-theme {
+  --color-cobalt: #22c55e !important; /* green-500 */
+  --color-cobalt-dim: rgba(34, 197, 94, 0.1) !important;
+  --color-rust: #16a34a !important; /* green-600 */
+  background-image: radial-gradient(circle, rgba(34, 197, 94, 0.1) 1px, transparent 1px) !important;
 }
 
 .critical-failure::after {

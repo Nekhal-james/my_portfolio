@@ -1,17 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { motion, AnimatePresence, useDragControls } from 'motion/react';
-import { Terminal as TerminalIcon, Cpu, Github, Radio, Wind, Map, Shield, Box, Zap, Layers, Activity, ChevronUp, Mail, ExternalLink, Linkedin } from 'lucide-react';
+import { Terminal as TerminalIcon, Cpu, Github, Radio, Wind, Map, Shield, Box, Zap, Layers, Activity, ChevronUp, Mail, ExternalLink, Linkedin, Move, Flower, Flower2 } from 'lucide-react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, ResponsiveContainer, YAxis } from 'recharts';
 
 // --- Contexts ---
-const ThemeContext = React.createContext<{ criticalFailure: boolean }>({ criticalFailure: false });
+type ThemeMode = 'obsidian' | 'critical' | 'happy' | 'flower' | 'day' | 'dev';
+const ThemeContext = React.createContext<{ theme: ThemeMode }>({ theme: 'obsidian' });
 
 // --- Components ---
 
-const GlitchCard = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => {
-  const { criticalFailure } = React.useContext(ThemeContext);
+const GlitchCard: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = "" }) => {
+  const { theme } = React.useContext(ThemeContext);
   const [isHovering, setIsHovering] = useState(false);
-  const isGlitching = criticalFailure && isHovering;
+  const isGlitching = theme === 'critical' && isHovering;
 
   return (
     <motion.div
@@ -77,6 +78,58 @@ const GlitchCard = ({ children, className = "" }: { children: React.ReactNode, c
         </>
       )}
     </motion.div>
+  );
+};
+
+const GlitchText = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => {
+  return (
+    <div className={`relative inline-block ${className}`}>
+      <motion.div
+        animate={{
+          x: [-1, 1, -0.5, 0, 0.5, -1],
+          y: [0.5, -0.5, 0, 0.5, -0.5, 0],
+          opacity: [1, 0.9, 1, 0.95, 1],
+        }}
+        transition={{
+          duration: 0.1,
+          repeat: Infinity,
+          repeatType: "mirror",
+        }}
+        className="relative z-10"
+      >
+        {children}
+      </motion.div>
+      <motion.div
+        animate={{
+          x: [1.5, -1.5, 0.5, 0, -0.5, 1.5],
+          opacity: [0, 0.7, 0, 0.5, 0],
+          scaleY: [1, 1.1, 1],
+        }}
+        transition={{
+          duration: 0.08,
+          repeat: Infinity,
+          repeatType: "mirror",
+        }}
+        className="absolute inset-0 text-[#ff0000] z-0 translate-x-[2px] opacity-70 mix-blend-screen"
+      >
+        {children}
+      </motion.div>
+      <motion.div
+        animate={{
+          x: [-1.5, 1.5, -0.5, 0, 0.5, -1.5],
+          opacity: [0, 0.7, 0, 0.5, 0],
+          scaleY: [1, 0.9, 1],
+        }}
+        transition={{
+          duration: 0.12,
+          repeat: Infinity,
+          repeatType: "mirror",
+        }}
+        className="absolute inset-0 text-[#00ffff] z-0 -translate-x-[2px] opacity-70 mix-blend-screen"
+      >
+        {children}
+      </motion.div>
+    </div>
   );
 };
 
@@ -164,6 +217,106 @@ const ShutdownSequence = () => {
         transition={{ repeat: Infinity, duration: 0.5 }}
         className="w-2 h-4 bg-red-500 mt-1"
       />
+    </div>
+  );
+};
+
+const FlowerBloom = () => {
+  const flowers = useMemo(() => Array.from({ length: 45 }).map((_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    size: Math.random() * 25 + 15,
+    delay: Math.random() * 5, // Wider distribution
+    duration: Math.random() * 4 + 6,
+    rotation: Math.random() * 360,
+    drift: (Math.random() - 0.5) * 40,
+    Type: Math.random() > 0.5 ? Flower : Flower2
+  })), []);
+
+  return (
+    <div className="fixed inset-0 z-[1000] pointer-events-none overflow-hidden">
+      {flowers.map(({ id, x, y, size, delay, duration, rotation, drift, Type }) => (
+        <motion.div
+          key={id}
+          initial={{ opacity: 0, scale: 0, rotate: rotation, x: 0 }}
+          animate={{ 
+            opacity: [0, 1, 1, 0], 
+            scale: [0, 1, 1, 0.7], 
+            y: [-50, -150], // Drift up relative to start
+            x: [0, drift], // Subtle lateral sway
+            rotate: rotation + 90 
+          }}
+          transition={{ 
+            duration, 
+            delay, 
+            repeat: Infinity, 
+            ease: "easeInOut" 
+          }}
+          style={{ 
+            left: `${x}%`, 
+            top: `${y}%`,
+            position: 'absolute',
+            willChange: 'transform, opacity'
+          }}
+        >
+           <Type 
+             className="text-purple-400/80 drop-shadow-[0_0_8px_rgba(168,85,247,0.4)]" 
+             style={{ width: size, height: size }} 
+           />
+        </motion.div>
+      ))}
+    </div>
+  );
+};
+
+const MatrixRain = () => {
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+  
+  const columns = useMemo(() => {
+    const count = isMobile ? 15 : 40; // Fewer columns on mobile
+    const charLimit = isMobile ? 8 : 15; // Shorter strings on mobile
+    
+    return Array.from({ length: count }).map((_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      delay: Math.random() * 5,
+      duration: Math.random() * 3 + 5, // Slower (5-8s)
+      chars: Array.from({ length: charLimit }).map(() => 
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&"[Math.floor(Math.random() * 40)]
+      )
+    }));
+  }, [isMobile]);
+
+  return (
+    <div className="fixed inset-0 z-[1000] pointer-events-none overflow-hidden bg-black/40">
+      {columns.map(({ id, x, delay, duration, chars }) => (
+        <motion.div
+          key={id}
+          initial={{ y: -500, opacity: 0 }}
+          animate={{ y: 1200, opacity: [0, 0.3, 0.3, 0] }}
+          transition={{ 
+            duration, 
+            delay, 
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute font-mono text-green-500 text-sm md:text-lg flex flex-col items-center leading-none"
+          style={{ 
+            left: `${x}%`,
+            willChange: 'transform'
+          }}
+        >
+          {chars.map((char, j) => (
+            <span 
+              key={j}
+              className={`${j === 0 ? 'text-white' : 'text-green-500/60'} ${j > 0 && j % 3 === 0 ? 'animate-pulse' : ''}`}
+            >
+              {char}
+            </span>
+          ))}
+        </motion.div>
+      ))}
     </div>
   );
 };
@@ -541,9 +694,11 @@ interface WindowProps {
   isFocused: boolean;
   onFocus: () => void;
   zIndex: number;
+  resetTrigger?: number;
+  isMobile?: boolean;
 }
 
-const MissionWindow = ({ title, isOpen, onClose, children, icon, id, minimizedWindows, onMinimize, isLoading, isClosing, isFocused, onFocus, zIndex }: WindowProps) => {
+const MissionWindow = ({ title, isOpen, onClose, children, icon, id, minimizedWindows, onMinimize, isLoading, isClosing, isFocused, onFocus, zIndex, resetTrigger, isMobile }: WindowProps) => {
   const [isMaximized, setIsMaximized] = useState(false);
   const dragControls = useDragControls();
   const isMinimized = minimizedWindows.includes(id);
@@ -553,10 +708,11 @@ const MissionWindow = ({ title, isOpen, onClose, children, icon, id, minimizedWi
   return (
     <AnimatePresence mode="wait">
       <div 
-        className={`fixed flex items-center justify-center pointer-events-none ${isMaximized ? 'inset-0' : 'inset-6'}`}
+        className={`fixed flex items-center justify-center pointer-events-none ${isMaximized ? 'inset-0' : 'inset-4 md:inset-6 py-[70px] md:py-0'}`}
         style={{ zIndex }}
       >
         <motion.div
+          key={`${id}-${resetTrigger}`} // Force re-render at center on reset
           drag={!isMaximized}
           dragControls={dragControls}
           dragListener={false}
@@ -571,7 +727,7 @@ const MissionWindow = ({ title, isOpen, onClose, children, icon, id, minimizedWi
             boxShadow: isFocused ? "0 0 30px rgba(88,166,255,0.15)" : "0 0 10px rgba(0,0,0,0.5)"
           }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          className={`bg-obsidian border rounded-lg overflow-hidden flex flex-col transition-all duration-300 pointer-events-auto ${isMaximized ? 'w-full h-full' : 'w-full max-w-4xl max-h-[80vh]'}`}
+          className={`bg-obsidian border rounded-lg overflow-hidden flex flex-col transition-all duration-300 pointer-events-auto ${isMaximized ? 'w-full h-full' : 'w-full max-w-4xl max-h-[75vh] md:max-h-[80vh]'}`}
         >
           <div 
             onPointerDown={(e) => {
@@ -580,7 +736,7 @@ const MissionWindow = ({ title, isOpen, onClose, children, icon, id, minimizedWi
             }}
             className={`bg-white/5 px-4 py-3 flex items-center justify-between border-b select-none cursor-move draggable-handle transition-colors ${isFocused ? 'border-cobalt/50 bg-cobalt/10' : 'border-cobalt/20 bg-white/5'}`}
           >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <div className="flex gap-1.5 mr-4" onPointerDown={(e) => e.stopPropagation()}>
                 <button 
                   onClick={onClose}
@@ -607,6 +763,19 @@ const MissionWindow = ({ title, isOpen, onClose, children, icon, id, minimizedWi
                   <span className="text-[8px] text-black/40 opacity-0 group-hover:opacity-100 font-bold">□</span>
                 </button>
               </div>
+
+              {isMobile && !isMaximized && (
+                <button 
+                  onPointerDown={(e) => {
+                    onFocus();
+                    dragControls.start(e);
+                  }}
+                  className="p-2 bg-cobalt/20 border border-cobalt/40 rounded-md active:bg-cobalt/40 active:scale-95 transition-all text-cobalt touch-none"
+                >
+                  <Move className="w-4 h-4" />
+                </button>
+              )}
+
               <div className="flex items-center gap-3">
                 <div className={`${isFocused ? 'text-cobalt' : 'text-cobalt/50'} transition-colors`}>{icon}</div>
                 <span className={`mono text-[10px] font-bold tracking-widest transition-colors ${isFocused ? 'opacity-100 text-white' : 'opacity-60'}`}>{title}</span>
@@ -640,48 +809,47 @@ const MissionWindow = ({ title, isOpen, onClose, children, icon, id, minimizedWi
   );
 };
 
-const TerminalContent = ({ onToggleCinema, onOpenWindow, onMinimizeSelf }: { onToggleCinema: (active: boolean) => void, onOpenWindow: (id: string) => void, onMinimizeSelf: () => void }) => {
+const TerminalContent = ({ onToggleCinema, onOpenWindow, onMinimizeSelf, isMobile, onThemeChange }: { onToggleCinema: (active: boolean) => void, onOpenWindow: (id: string) => void, onMinimizeSelf: () => void, isMobile: boolean, onThemeChange: (theme: ThemeMode) => void }) => {
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<string[]>(['Type /help to begin.']);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isPendingExecute, setIsPendingExecute] = useState(false);
 
-  const handleCommand = (e: React.FormEvent) => {
-    e.preventDefault();
+  const keyboardRows = [
+    ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+    ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+    ['Z', 'X', 'C', 'V', 'B', 'N', 'M', '/']
+  ];
+
+  const handleCommand = (e?: React.FormEvent, overrideCmd?: string) => {
+    if (e) e.preventDefault();
     if (isProcessing) return;
     
-    const cmd = input.toLowerCase().trim();
-    setHistory(prev => [...prev, `> ${input}`]);
+    const cmdInput = overrideCmd || input;
+    const cmd = cmdInput.toLowerCase().trim();
+    if (!cmd) return;
+
+    setHistory(prev => [...prev, `> ${cmdInput}`]);
+
+    if (isPendingExecute) {
+       if (cmd === 'y' || cmd === 'yes') {
+          setIsPendingExecute(false);
+          startExecuteSequence();
+       } else {
+          setIsPendingExecute(false);
+          setHistory(prev => [...prev, 'EXECUTION_ABORTED: Verification failed.', 'System remaining secure.']);
+       }
+       setInput('');
+       return;
+    }
 
     if (cmd === '/excecute' || cmd === '/execute') {
-      setIsProcessing(true);
+      setIsPendingExecute(true);
       setHistory(prev => [...prev, 
-        'CRITICAL_COMMAND_ISSUED: Executing destructive sequence...', 
-        'WARNING: Accessing kernel level overrides...', 
-        'PROTOCOL_00_INIT: [....................] 0%'
+        '!!! CRITICAL_WARNING !!!',
+        'Protocol will deploy destructive payload and compromise system integrity.',
+        'VERIFY_EXECUTION? [y/n]'
       ]);
-
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += 4;
-        const barLength = Math.floor(progress / 5);
-        const bar = '#'.repeat(barLength).padEnd(20, '.');
-        
-        setHistory(prev => {
-          const newHistory = [...prev];
-          const lastIdx = newHistory.length - 1;
-          newHistory[lastIdx] = `PROTOCOL_00_INIT: [${bar}] ${progress}%`;
-          return newHistory;
-        });
-
-        if (progress >= 100) {
-          clearInterval(interval);
-          setHistory(prev => [...prev, 'PAYLOAD_DEPLOYED: System stability lost.', 'INITIALIZING_BLACKOUT...']);
-          setTimeout(() => {
-            onToggleCinema(true);
-            setIsProcessing(false);
-          }, 800);
-        }
-      }, 80);
     } else if (cmd === '/cancel') {
       setHistory(prev => [...prev, 
         'ABORTING_SEQUENCE: Restoring system stability...', 
@@ -756,21 +924,84 @@ const TerminalContent = ({ onToggleCinema, onOpenWindow, onMinimizeSelf }: { onT
     } else if (cmd === '/clear') {
       setHistory(['Terminal cleared.']);
     } else if (cmd === '/help') {
-      setHistory(prev => [...prev, 'Available: /about, /skills, /projects, /connect, /git, /linkedin, /mail, /excecute, /cancel, /status, /clear']);
+      setHistory(prev => [...prev, 
+        '--- AVAILABLE_SYSTEM_PROTOCOLS ---',
+        '/about     - Display personal mission profile',
+        '/skills    - Access technical ecosystem database',
+        '/projects  - Open active mission archives',
+        '/connect   - Initiate secure communication link',
+        '/git       - Access external GitHub repositories',
+        '/linkedin  - Sync with professional network',
+        '/mail      - Open secure mail gateway',
+        '/status    - Run system diagnostics',
+        '/happy     - Optimize UI for dopamine levels',
+        '/day       - Simulate high-luminance solar mode',
+        '/flower    - Initiate botanical bloom (Amethyst)',
+        '/dev       - Inject Matrix developer overlay',
+        '/clear     - Flush terminal history buffer',
+        '/cancel    - Revert system to Silicon Obsidian state',
+        '-----------------------------------',
+        '/excecute  - [WARNING] Deploy destructive payload'
+      ]);
     } else if (cmd === '/status') {
        setHistory(prev => [...prev, 
          '--- SYSTEM_DIAGNOSTICS ---',
          'HOST: Nekhaljames', 
-         'UPTIME: 18 years 5 months', 
+         'SYSTEM_STATE: OPERATIONAL', 
          'ARCH: ARM64/x86_64 Hybrid',
          'KERNEL_INTEGRITY: SECURE',
          'MEMORY_UTILIZATION: 42%',
          'ACTIVE_NODES: 7/7 ONLINE'
        ]);
+    } else if (cmd === '/happy') {
+      setHistory(prev => [...prev, 'OPTIMIZING_DOPAMINE_LEVELS... [OK]', 'ENABLING_EMOTIONAL_OVERRIDE... [OK]', 'UI_RECALIBRATED: HAPPY_MODE_ACTIVE.']);
+      onThemeChange('happy');
+    } else if (cmd === '/day') {
+      setHistory(prev => [...prev, 'SIMULATING_SOLAR_EXPOSURE...', 'ADJUSTING_LUMINESCENCE... [OK]', 'UI_RECALIBRATED: LIGHT_MODE_ACTIVE.']);
+      onThemeChange('day');
+    } else if (cmd === '/flower') {
+      setHistory(prev => [...prev, 'INIT_BOTANICAL_SEQUENCE...', 'BLOOMING_VIRTUAL_FLORA... [OK]', 'TEMPORARY_MODIFICATION_ACTIVE.']);
+      onThemeChange('flower');
+    } else if (cmd === '/dev') {
+      setHistory(prev => [...prev, 'ACCESSING_DEVELOPER_KERNEL...', 'INJECTING_MATRIX_OVERLAY... [OK]', 'UI_RECALIBRATED: DEV_MODE_ACTIVE.']);
+      onThemeChange('dev');
     } else {
       setHistory(prev => [...prev, `Command not found: ${cmd}`]);
     }
     setInput('');
+  };
+
+  const startExecuteSequence = () => {
+    setIsProcessing(true);
+    setHistory(prev => [...prev, 
+      'VERIFICATION_CONFIRMED. [OK]',
+      'CRITICAL_COMMAND_ISSUED: Executing destructive sequence...', 
+      'WARNING: Accessing kernel level overrides...', 
+      'PROTOCOL_00_INIT: [....................] 0%'
+    ]);
+
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 4;
+      const barLength = Math.floor(progress / 5);
+      const bar = '#'.repeat(barLength).padEnd(20, '.');
+      
+      setHistory(prev => {
+        const newHistory = [...prev];
+        const lastIdx = newHistory.length - 1;
+        newHistory[lastIdx] = `PROTOCOL_00_INIT: [${bar}] ${progress}%`;
+        return newHistory;
+      });
+
+      if (progress >= 100) {
+        clearInterval(interval);
+        setHistory(prev => [...prev, 'PAYLOAD_DEPLOYED: System stability lost.', 'INITIALIZING_BLACKOUT...']);
+        setTimeout(() => {
+          onToggleCinema(true);
+          setIsProcessing(false);
+        }, 800);
+      }
+    }, 80);
   };
 
   return (
@@ -782,11 +1013,48 @@ const TerminalContent = ({ onToggleCinema, onOpenWindow, onMinimizeSelf }: { onT
           </div>
         ))}
       </div>
+    <div className="flex flex-col gap-2">
+      {isMobile && (
+        <div className="flex flex-col gap-1 mb-2 bg-black/40 p-1.5 rounded-lg border border-cobalt/10">
+          {keyboardRows.map((row, rowIdx) => (
+            <div key={rowIdx} className="flex justify-center gap-1">
+              {row.map((key) => (
+                <button
+                  key={key}
+                  onClick={() => setInput(prev => prev + key.toLowerCase())}
+                  className="flex-1 mono text-[10px] h-9 bg-cobalt/10 border border-cobalt/20 text-cobalt hover:bg-cobalt/20 active:scale-95 transition-all rounded uppercase flex items-center justify-center font-bold"
+                >
+                  {key}
+                </button>
+              ))}
+            </div>
+          ))}
+          <div className="flex justify-center gap-1 mt-1">
+            <button
+              onClick={() => setInput(prev => prev.slice(0, -1))}
+              className="px-4 mono text-[10px] h-9 bg-red-900/20 border border-red-500/30 text-red-400 rounded active:scale-95 transition-all text-center flex items-center justify-center"
+            >
+              DEL
+            </button>
+            <button
+              onClick={() => setInput(prev => prev + ' ')}
+              className="flex-[2] mono text-[10px] h-9 bg-cobalt/5 border border-cobalt/20 text-cobalt rounded active:scale-95 transition-all flex items-center justify-center"
+            >
+              SPACE
+            </button>
+            <button
+              onClick={() => handleCommand()}
+              className="px-4 mono text-[10px] h-9 bg-cobalt/30 border border-cobalt/50 text-white font-bold rounded active:scale-95 transition-all flex items-center justify-center"
+            >
+              EXEC [ENTER]
+            </button>
+          </div>
+        </div>
+      )}
       <form onSubmit={handleCommand} className="bg-white/5 px-4 h-12 flex items-center gap-2 border border-cobalt/20 rounded">
          <span className="text-cobalt text-xs font-bold">$</span>
          <input
             type="text"
-            autoFocus
             className="bg-transparent border-none outline-none flex-grow font-mono text-xs text-white"
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -794,7 +1062,8 @@ const TerminalContent = ({ onToggleCinema, onOpenWindow, onMinimizeSelf }: { onT
          />
       </form>
     </div>
-  );
+  </div>
+);
 };
 
 export default function App() {
@@ -803,8 +1072,19 @@ export default function App() {
   const [focusedWindow, setFocusedWindow] = useState<string | null>(null);
   const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({});
   const [closingWindows, setClosingWindows] = useState<string[]>([]);
-  const [criticalFailure, setCriticalFailure] = useState(false);
+  const [theme, setTheme] = useState<ThemeMode>('obsidian');
   const [blackoutStage, setBlackoutStage] = useState<'idle' | 'active' | 'recovering'>('idle');
+  const [showPreviews, setShowPreviews] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [resetTriggers, setResetTriggers] = useState<{ [key: string]: number }>({});
+  const lastTapRef = useRef<{ [key: string]: number }>({});
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 1024);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   const menuItems = [
     { id: 'about', label: 'ABOUT', icon: <Activity className="w-4 h-4" /> },
@@ -818,16 +1098,29 @@ export default function App() {
     if (active) {
       setBlackoutStage('active');
       setTimeout(() => {
-        setCriticalFailure(true);
+        setTheme('critical');
         setBlackoutStage('recovering');
         setTimeout(() => setBlackoutStage('idle'), 2000);
       }, 3000);
     } else {
-      setCriticalFailure(false);
+      setTheme('obsidian');
     }
   };
 
+  const handleThemeChange = (newTheme: ThemeMode) => {
+    setTheme(newTheme);
+  };
+
   const handleMenuClick = (id: string) => {
+    const now = Date.now();
+    const lastTap = lastTapRef.current[id] || 0;
+    
+    if (now - lastTap < 300) {
+      // Double tap detected
+      setResetTriggers(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+    }
+    lastTapRef.current[id] = now;
+
     setFocusedWindow(id);
     if (minimizedWindows.includes(id)) {
       setMinimizedWindows(prev => prev.filter(w => w !== id));
@@ -877,67 +1170,133 @@ export default function App() {
   };
 
   return (
-    <ThemeContext.Provider value={{ criticalFailure }}>
-      <main className={`mission-control-grid selection:bg-cobalt selection:text-black transition-all duration-1000 ${criticalFailure ? 'critical-failure' : ''}`}>
+    <ThemeContext.Provider value={{ theme }}>
+      <main 
+        className={`mission-control-grid overflow-hidden selection:bg-cobalt selection:text-black transition-all duration-700 ease-in-out ${theme === 'critical' ? 'critical-failure' : ''} ${theme === 'happy' ? 'happy-theme' : ''} ${theme === 'day' ? 'day-theme' : ''} ${theme === 'flower' ? 'flower-theme' : ''}`}
+        style={{
+          gridTemplateColumns: isMobile ? '1fr' : (showPreviews ? '80px 1fr 300px' : '80px 1fr 0px'),
+          gridTemplateRows: isMobile ? '60px 1fr 60px' : (showPreviews ? '60px 1fr 280px' : '60px 1fr 0px'),
+        }}
+      >
         <ScanningCursor />
+        {theme === 'flower' && <FlowerBloom />}
+        {theme === 'dev' && <MatrixRain />}
 
       {/* HEADER BAR */}
-      <header className="grid-cell col-span-3 flex justify-between items-center px-6 border-b border-cobalt">
+      <header className={`grid-cell flex justify-between items-center px-4 md:px-6 border-b border-cobalt ${isMobile ? 'col-span-1' : 'col-span-3'}`}>
         <div className="mono flex items-center gap-2">
-          <div className={`w-2 h-2 rounded-full shadow-[0_0_8px_currentColor] animate-pulse ${criticalFailure ? 'bg-red-600' : 'bg-cobalt'}`} />
-          {criticalFailure ? (
-            <span className="text-red-600 font-bold animate-pulse">SYSTEM_FAILURE: KERNEL_PANIC_STATE</span>
+          <div className={`w-2 h-2 rounded-full shadow-[0_0_8px_currentColor] animate-pulse ${theme === 'critical' ? 'bg-red-600' : 'bg-cobalt'}`} />
+          {theme === 'critical' ? (
+            <span className="text-red-600 font-bold animate-pulse text-[10px] md:text-sm">FAILURE: PANIC</span>
+          ) : theme === 'happy' ? (
+            <span className="text-yellow-400 font-bold text-[10px] md:text-sm animate-bounce">EMOTION: HAPPY</span>
+          ) : theme === 'day' ? (
+            <span className="text-blue-600 font-bold text-[10px] md:text-sm">STATE: NOON_DAY</span>
+          ) : theme === 'dev' ? (
+            <span className="text-green-500 font-bold text-[10px] md:text-sm animate-pulse">MODE: DEV_CORE</span>
           ) : (
-            'SYSTEM_STATE: OPERATIONAL'
+            <span className="text-[10px] md:text-sm">{isMobile ? 'OP_STATE' : 'SYSTEM_STATE: OPERATIONAL'}</span>
           )}
         </div>
-        <div className="mono hidden md:block">
+        {isMobile && (
+          <motion.div 
+            initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
+            className="flex-grow flex justify-center"
+          >
+            <div className="bg-cobalt/10 border border-cobalt/30 px-2 py-0.5 rounded text-[8px] uppercase tracking-widest text-cobalt flex items-center gap-1.5 animate-pulse">
+              <span className="w-1 h-1 bg-cobalt rounded-full" />
+              Laptop/Desktop Preferred
+            </div>
+          </motion.div>
+        )}
+        <div className="mono hidden lg:block">
           COORD: 9.9312° N, 76.2673° E (KOCHI)
         </div>
-        <div className="mono text-rust">
-          SEC_ARCH: AES-256-GCM VERIFIED
+        <div className="flex items-center gap-2 md:gap-4">
+          {!isMobile && (
+            <button 
+              onClick={() => setShowPreviews(!showPreviews)}
+              className={`mono text-[9px] md:text-[10px] px-2 md:px-3 py-1 border transition-all flex items-center gap-2 group ${showPreviews ? 'bg-cobalt/20 border-cobalt text-white' : 'border-cobalt/30 text-cobalt/60 hover:border-cobalt/60'}`}
+            >
+              <div className={`w-1 h-1 md:w-1.5 md:h-1.5 rounded-full ${showPreviews ? 'bg-green-500 shadow-[0_0_8px_#22c55e]' : 'bg-slate-600'}`} />
+              {showPreviews ? 'LIVE_FEEDS: ACTIVE' : 'LIVE_FEEDS: OFFLINE'}
+            </button>
+          )}
+          {!isMobile && (
+            <div className="mono text-rust">
+              SEC_ARCH: AES-256-GCM VERIFIED
+            </div>
+          )}
         </div>
       </header>
 
-      {/* MISSION MENU SIDEBAR */}
-      <aside className="grid-cell row-span-2 flex flex-col items-center pt-8 border-r border-cobalt/20 overflow-visible">
-        <div className="mono [writing-mode:vertical-rl] rotate-180 mb-10 opacity-60">MISSION_MENU</div>
-        <nav className="flex flex-col gap-6 w-full px-2">
-          {menuItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => handleMenuClick(item.id)}
-              className={`mono text-[10px] flex flex-col items-center gap-2 p-3 transition-all group ${activeWindows.includes(item.id) && !minimizedWindows.includes(item.id) ? 'text-white' : 'text-cobalt/60'}`}
-            >
-              <div className="group-hover:scale-110 transition-transform relative">
-                {item.icon}
-                {minimizedWindows.includes(item.id) && (
-                  <div className="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
-                )}
-                {activeWindows.includes(item.id) && !minimizedWindows.includes(item.id) && (
-                   <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-cobalt" />
-                )}
-              </div>
-              <span className="opacity-60 group-hover:opacity-100">{item.label}</span>
-            </button>
-          ))}
-        </nav>
-      </aside>
+      {/* MISSION MENU SIDEBAR (HIDDEN ON MOBILE, MOVED TO FOOTER) */}
+      {!isMobile && (
+        <aside className="grid-cell row-span-2 flex flex-col items-center pt-8 border-r border-cobalt/20 overflow-visible">
+          <div className="mono [writing-mode:vertical-rl] rotate-180 mb-10 opacity-60">MISSION_MENU</div>
+          <nav className="flex flex-col gap-6 w-full px-2">
+            {menuItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => handleMenuClick(item.id)}
+                className={`mono text-[10px] flex flex-col items-center gap-2 p-3 transition-all group ${activeWindows.includes(item.id) && !minimizedWindows.includes(item.id) ? 'text-white' : 'text-cobalt/60'}`}
+              >
+                <div className="group-hover:scale-110 transition-transform relative">
+                  {item.icon}
+                  {minimizedWindows.includes(item.id) && (
+                    <div className="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
+                  )}
+                  {activeWindows.includes(item.id) && !minimizedWindows.includes(item.id) && (
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-cobalt" />
+                  )}
+                </div>
+                <span className="opacity-60 group-hover:opacity-100">{item.label}</span>
+              </button>
+            ))}
+          </nav>
+        </aside>
+      )}
 
       {/* HERO SECTION */}
-      <section className="grid-cell flex flex-col justify-center p-12">
+      <section className={`grid-cell flex flex-col justify-center overflow-auto ${isMobile ? 'p-6' : 'p-12'}`}>
         <Hero />
       </section>
 
       {/* SKILLS PREVIEW SIDEBAR */}
-      <aside className="grid-cell border-l border-cobalt/10">
-        <BentoGrid />
-      </aside>
+      {!isMobile && (
+        <aside 
+          className={`grid-cell border-cobalt/10 overflow-hidden relative transition-all duration-700 ${!showPreviews ? 'opacity-0 invisible h-0 p-0 overflow-hidden' : 'opacity-100 visible border-l border-t md:border-t-0'}`}
+        >
+          {showPreviews && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="h-full"
+            >
+              <BentoGrid />
+            </motion.div>
+          )}
+        </aside>
+      )}
 
       {/* PROJECT PREVIEW ROW */}
-      <section className="grid-cell col-span-2 border-t border-cobalt/20">
-        <ProjectSection />
-      </section>
+      {!isMobile && (
+        <section 
+          className={`grid-cell overflow-hidden relative transition-all duration-700 ${!showPreviews ? 'opacity-0 invisible h-0 p-0 overflow-hidden' : `opacity-100 visible border-t border-cobalt/20 col-span-2`}`}
+        >
+          {showPreviews && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="h-full"
+            >
+              <ProjectSection />
+            </motion.div>
+          )}
+        </section>
+      )}
 
       {/* WINDOWS */}
       <MissionWindow 
@@ -953,6 +1312,8 @@ export default function App() {
         onFocus={() => handleFocus('about')}
         zIndex={90 + activeWindows.indexOf('about')}
         icon={<Activity className="w-5 h-5 text-cobalt" />}
+        resetTrigger={resetTriggers['about'] || 0}
+        isMobile={isMobile}
       >
         <div className="space-y-8 max-w-2xl mx-auto">
           <div className="flex flex-col md:flex-row gap-8 items-start">
@@ -999,6 +1360,8 @@ export default function App() {
         onFocus={() => handleFocus('skills')}
         zIndex={90 + activeWindows.indexOf('skills')}
         icon={<Cpu className="w-5 h-5 text-cobalt" />}
+        resetTrigger={resetTriggers['skills'] || 0}
+        isMobile={isMobile}
       >
         <div className="flex flex-col gap-10 pt-4">
           {/* Top Level Telemetry */}
@@ -1144,6 +1507,8 @@ export default function App() {
         onFocus={() => handleFocus('projects')}
         zIndex={90 + activeWindows.indexOf('projects')}
         icon={<Box className="w-5 h-5 text-cobalt" />}
+        resetTrigger={resetTriggers['projects'] || 0}
+        isMobile={isMobile}
       >
         <div className="flex flex-col gap-8 pt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1224,6 +1589,8 @@ export default function App() {
         onFocus={() => handleFocus('contact')}
         zIndex={90 + activeWindows.indexOf('contact')}
         icon={<Radio className="w-5 h-5 text-cobalt" />}
+        resetTrigger={resetTriggers['contact'] || 0}
+        isMobile={isMobile}
       >
         <div className="flex flex-col items-center justify-center py-12 space-y-8">
            <div className="text-center space-y-2">
@@ -1278,24 +1645,65 @@ export default function App() {
         onFocus={() => handleFocus('terminal')}
         zIndex={90 + activeWindows.indexOf('terminal')}
         icon={<TerminalIcon className="w-5 h-5 text-cobalt" />}
+        resetTrigger={resetTriggers['terminal'] || 0}
+        isMobile={isMobile}
       >
         <TerminalContent 
           onToggleCinema={handleCriticalToggle} 
           onOpenWindow={handleMenuClick}
           onMinimizeSelf={() => handleMinimize('terminal')}
+          isMobile={isMobile}
+          onThemeChange={handleThemeChange}
         />
       </MissionWindow>
 
-      <footer className="fixed bottom-0 left-0 w-full h-[40px] bg-obsidian border-t border-cobalt/20 flex items-center px-5 z-[100]">
-        <div className="flex items-center gap-4 w-full h-full relative">
-          <div className="mono text-[10px] opacity-50 shrink-0">TASK_MANAGER:</div>
+      <footer className="fixed bottom-0 left-0 w-full h-[64px] md:h-[40px] bg-obsidian/80 backdrop-blur-md border-t border-cobalt/30 flex items-center px-2 md:px-5 z-[100] safe-area-bottom">
+        <div className="flex items-center gap-4 w-full h-full relative overflow-hidden">
+          <div className="mono text-[10px] opacity-50 shrink-0 hidden md:block text-cobalt">TASK_MANAGER:</div>
           
-          <div className="flex items-center gap-2 overflow-x-auto h-full px-2 scrollbar-none">
-            {activeWindows.length === 0 && (
+          <div className="flex items-center w-full justify-around md:justify-start h-full">
+            {isMobile && menuItems.map(item => {
+               const isActive = activeWindows.includes(item.id);
+               const isFocused = focusedWindow === item.id;
+               const isMinimized = minimizedWindows.includes(item.id);
+
+               return (
+                 <motion.button
+                  key={item.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ 
+                    opacity: 1,
+                    y: 0,
+                    backgroundColor: isFocused ? "rgba(88,166,255,0.1)" : "transparent"
+                  }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => handleMenuClick(item.id)}
+                  className="flex flex-col items-center justify-center relative flex-1 h-full gap-1 transition-all rounded-lg"
+                >
+                  <div className={`transition-all duration-300 ${isFocused ? 'text-cobalt scale-110 drop-shadow-[0_0_8px_rgba(88,166,255,0.5)]' : 'text-cobalt/40'}`}>
+                    {item.icon}
+                  </div>
+                  <span className={`mono text-[7px] uppercase tracking-[0.1em] transition-colors ${isFocused ? 'text-white' : 'text-cobalt/30'}`}>
+                    {item.label.split(' ')[0]}
+                  </span>
+                  
+                  {/* Status Indicator */}
+                  <div className="absolute bottom-1 flex gap-0.5 justify-center items-center h-1 w-full">
+                    {isActive && (
+                      <motion.div 
+                        layoutId={`indicator-${item.id}`}
+                        className={`h-0.5 rounded-full transition-all duration-300 ${isFocused ? 'w-4 bg-cobalt' : 'w-1 bg-cobalt/30'} ${isMinimized ? 'bg-yellow-500/50' : ''}`}
+                      />
+                    )}
+                  </div>
+                </motion.button>
+               );
+            })}
+
+            {!isMobile && activeWindows.length === 0 && (
               <div className="mono text-[8px] opacity-30 select-none">NO_ACTIVE_PROCESSES</div>
             )}
-            <AnimatePresence>
-              {activeWindows.map((id) => {
+            {!isMobile && activeWindows.map((id) => {
                 const menuItem = menuItems.find(item => item.id === id);
                 if (!menuItem) return null;
                 const isFocused = focusedWindow === id;
@@ -1330,10 +1738,9 @@ export default function App() {
                   </motion.button>
                 );
               })}
-            </AnimatePresence>
           </div>
 
-          <div className="absolute right-0 top-0 h-full flex items-center pr-4 pointer-events-none">
+          <div className="absolute right-0 top-0 h-full flex items-center pr-4 pointer-events-none hidden md:flex">
             <div className="mono text-[10px] opacity-40">TERMINAL_INPUT: /_</div>
           </div>
         </div>
@@ -1525,11 +1932,11 @@ export default function App() {
                 animate={{ scale: 1, opacity: 1 }}
                 className="space-y-6"
               >
-                <div className="text-red-600 text-3xl md:text-5xl font-black tracking-tight mb-4 animate-pulse">
-                  CRITICAL_SYSTEM_FAILURE
+                <div className="text-red-600 text-3xl md:text-5xl font-black tracking-tight mb-4">
+                  <GlitchText>CRITICAL_SYSTEM_FAILURE</GlitchText>
                 </div>
-                <div className="mono text-red-500 text-xl tracking-[0.2em]">
-                  KERNEL_PANIC_0xFF00AD // CORE_DUMP_PROCEEDING
+                <div className="mono text-red-500 text-sm md:text-xl tracking-[0.2em]">
+                  <GlitchText>KERNEL_PANIC_0xFF00AD // CORE_DUMP_PROCEEDING</GlitchText>
                 </div>
                 <div className="w-64 h-1 bg-red-900/40 relative mx-auto overflow-hidden mt-8">
                   <motion.div 
@@ -1548,7 +1955,7 @@ export default function App() {
                   transition={{ duration: 0.5, repeat: 4 }}
                   className="mono text-red-600 font-bold"
                >
-                 SYSTEM_MUTATING... RELOADING_AS_PANIC_NODE_01
+                 <GlitchText>SYSTEM_MUTATING... RELOADING_AS_PANIC_NODE_01</GlitchText>
                </motion.div>
             )}
           </motion.div>
