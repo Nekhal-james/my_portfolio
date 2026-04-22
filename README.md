@@ -1,6 +1,5 @@
-# 🚀 Mission Control: Nekhaljames Portfolio
+#  Nekhal james - Portfolio
 
-![Silicon Obsidian Aesthetic](https://raw.githubusercontent.com/lucide-react/lucide/main/icons/terminal.svg)
 
 > **[STATUS: OPERATIONAL]** // **[ARCH: EDGE_AI_SYSTEMS]**
 
@@ -44,31 +43,6 @@ This portfolio is not just a website; it's a simulated operating environment—*
 
 ---
 
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js (v18+)
-- npm / yarn
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/nekhaljames/mission-control-portfolio.git
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Launch the environment**
-   ```bash
-   npm run dev
-   ```
-   The system will be operational at `http://localhost:3000`.
-
----
 
 ## 🎨 Design Philosophy: "Silicon Obsidian"
 
