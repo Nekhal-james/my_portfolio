@@ -1,6 +1,3 @@
-<div align="center">
-  <img src="portfolio_readme_hero_1777109606623.png" width="100%" alt="Narrative Sketchbook Banner" />
-
   # 🌌 NARRATIVE SKETCHBOOK // OBSIDIAN OS
   **"Where the algorithm meets the art; where the code becomes the core."**
 
@@ -9,7 +6,7 @@
   [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
   [![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)](https://www.framer.com/motion/)
 
-  [Explore the Live Deployment](https://ai.studio/apps/7597639e-e36a-4c91-8b2e-122b0c0c6bea)
+  [Explore the Live Deployment]([https://nekhal.vercel.app/])
 </div>
 
 ---
