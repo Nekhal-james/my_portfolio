@@ -1,0 +1,17 @@
+@theme {
+  --font-sans: "Playpen Sans", cursive;
+  --font-display: "Caveat Brush", cursive;
+  --font-serif: "Georgia", serif;
+  --font-handwriting: "Architects Daughter", cursive;
+  --font-expressive: "Caveat Brush", cursive;
+  --font-body: "Playpen Sans", cursive;
+}
+
+body.story-theme {
+  background-color: #f7f3ed;
+  color: #1a1a1a;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}

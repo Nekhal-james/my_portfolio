@@ -1,63 +1,86 @@
-#  Nekhal james - Portfolio
+<div align="center">
+  <img src="portfolio_readme_hero_1777109606623.png" width="100%" alt="Narrative Sketchbook Banner" />
 
+  # 🌌 NARRATIVE SKETCHBOOK // OBSIDIAN OS
+  **"Where the algorithm meets the art; where the code becomes the core."**
 
-> **[STATUS: OPERATIONAL]** // **[ARCH: EDGE_AI_SYSTEMS]**
+  [![Vercel Analytics](https://img.shields.io/badge/Vercel-Analytics-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/analytics)
+  [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+  [![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)](https://www.framer.com/motion/)
 
-A high-performance, single-page "Mission Control" interface built for **Nekhaljames**, an **AI Student**, **Developer**, and **IoT Enthusiast** specializing in Hardware Architecture and Edge AI systems.
-
-This portfolio is not just a website; it's a simulated operating environment—**"Silicon Obsidian"**—designed to reflect the complexity and precision of low-level systems engineering.
-
----
-
-## ⚡ Core Systems (Features)
-
-### 🖥️ OS-Style Window Management
-- **Draggable Modules**: Fully interactive, draggable, and resizable mission windows (About, Skills, Projects, Reach Out).
-- **Persistent Task Manager**: A bottom-docked taskbar for managing minimized and active processes with real-time status indicators.
-- **Z-Index Stacking**: Intelligent window focus that brings active modules to the foreground.
-
-### 📟 Integrated Terminal Shell (Nekhal Shell v1.0)
-- **Command-Driven Navigation**: Navigate the entire portfolio using terminal commands like `/about`, `/skills`, and `/projects`.
-- **Module Launching**: Automatically minimizes the terminal and boots the requested module upon command execution.
-
-### 🌀 Technical Aesthetics & Animations
-- **Aggressive Glitch Transitions**: High-impact "lost connection" glitch effects using chromatic aberration and scanline distortion.
-- **Boot & Shutdown Sequences**: Immersive terminal-style logs when opening or closing system modules.
-- **Scanning Cursor**: A reactive crosshair cursor that interacts with technical nodes and draggable handles.
-
-### 🛠️ Hardware Awareness
-- **Dynamic Node Detection**: Real-time probe of the user's local system architecture (CPU cores, Architecture type, and Host OS).
-- **Bento Core Grid**: A high-density data dashboard displaying Github pulses and core tech stacks.
+  [Explore the Live Deployment](https://ai.studio/apps/7597639e-e36a-4c91-8b2e-122b0c0c6bea)
+</div>
 
 ---
 
-## 🏗️ Technical Architecture
+## 🎭 Dual-Core Experience
 
-| Layer | Technology |
-| :--- | :--- |
-| **Runtime** | React 18 + Vite |
-| **Styling** | Tailwind CSS (Silicon Obsidian Theme) |
-| **Motion** | Framer Motion (Complex transitions & physics) |
-| **Icons** | Lucide React |
-| **Deployment** | Cloud Run / Google AI Studio |
+This portfolio is built on a custom **Theme Engine** that bridges two fundamentally different worlds. At the landing page, the user is presented with a choice that dictates the entire technical and visual stack of the session.
 
----
+### 💠 Silicon OS v1.0 (Technical Mode)
+A high-performance, windowed environment designed for the "Obsidian Developer."
+- **Real-Time Telemetry HUD**: A fully replicated Performance Monitor (CPU, RAM, Disk, Net) with live 1s updates.
+- **Mission-Control Interaction**: A windowed OS interface for exploring projects, skills, and about nodes.
+- **Dynamic Hardware Visuals**: High-density grid backgrounds with reactive data-stream particles.
+- **Resource Simulation**: RAM allocation that scales with active windows, peaking at 98% for intensive workloads.
 
-
-## 🎨 Design Philosophy: "Silicon Obsidian"
-
-The design prioritizes **high-density data** and **architectural honesty**. 
-- **Colors**: Deep Obsidian (#0A0A0B) with Electric Cobalt (#58a6ff) accents and Rust Orange highlights.
-- **Typography**: Inter Tight for high-impact headings and IBM Plex Mono for technical metadata.
-- **User Experience**: Focused on the developer persona—fast, technical, and precise.
+### 📜 The Story Theme (Poetic Mode)
+A journey through the "Ink and Sketch" side of development.
+- **Hand-Drawn Aesthetics**: Custom charcoal sketches, paper textures, and organic transitions.
+- **Poetic Narrative**: A scroll-driven experience that treats code as modern ink.
+- **Cinematic Entry**: A minimalist, quote-driven global loader that sets the tone before the first pixel is drawn.
 
 ---
 
-## 👨‍💻 Developed By
+## 🛠️ Technical Specification
 
-**Nekhaljames**
-*AI Student | Developer | IoT Enthusiast*
+| Layer | Technology | Purpose |
+| :--- | :--- | :--- |
+| **Framework** | React 18 + Vite | Core application structure and HMR. |
+| **Logic** | TypeScript | Type-safe architecture and telemetry engines. |
+| **Animation** | Motion (Framer) | Cinematic transitions, window physics, and glitch effects. |
+| **Icons** | Lucide-React | Crisp, technical iconography. |
+| **Tracking** | Vercel Analytics | Real-time traffic and performance monitoring. |
+| **Visuals** | HTML5 Canvas | High-performance particle systems and backgrounds. |
 
 ---
 
-> "Adaptive Learning is my core process—deploying solutions like Rust and RISC-V to solve complex real-world challenges." 🛠️
+## 🚀 Installation & Local Node Boot
+
+To run the **Obsidian OS** in your local environment, follow these protocols:
+
+1. **Clone the Source**:
+   ```bash
+   git clone https://github.com/your-repo/narrative-sketchbook-portfolio.git
+   ```
+
+2. **Initialize Dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Configure the Environment**:
+   Create a `.env.local` file and establish your communication link:
+   ```env
+   GEMINI_API_KEY=your_key_here
+   ```
+
+4. **Boot System**:
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## 🌌 The Vision
+> *"Software is the modern ink; the algorithm is the new grammar. We aren't just writing books anymore; we are coding realities."*
+
+Developed with precision and passion by **Nekhal James**.
+
+---
+
+<div align="center">
+  <img src="https://img.shields.io/badge/System_Status-OPERATIONAL-success?style=flat-square&logo=appveyor" alt="Status" />
+  <img src="https://img.shields.io/badge/Security-SECURE_LINK-blue?style=flat-square&logo=lock" alt="Security" />
+</div>
