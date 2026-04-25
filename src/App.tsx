@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Power } from 'lucide-react';
 import StoryApp from './story_theme/StoryApp';
 import SiliconApp from './silicon_theme/SiliconApp';
 import Landing from './Landing';
@@ -9,6 +9,14 @@ import { AnimatePresence } from 'motion/react';
 export default function App() {
   const [theme, setTheme] = useState<'landing' | 'story' | 'silicon'>('landing');
   const [isPreloading, setIsPreloading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   useEffect(() => {
     // Reset classes
@@ -50,9 +58,10 @@ export default function App() {
             <div className="relative">
               <button 
                 onClick={() => setTheme('landing')}
-                className="fixed top-4 right-4 z-[99999] bg-cobalt/20 text-cobalt border border-cobalt/50 px-4 py-2 rounded shadow-[0_0_10px_rgba(88,166,255,0.2)] hover:bg-cobalt/30 hover:shadow-[0_0_15px_rgba(88,166,255,0.4)] transition-all font-mono text-xs uppercase"
+                className={`fixed top-3 right-3 md:top-4 md:right-4 z-[99999] bg-cobalt/20 text-cobalt border border-cobalt/50 rounded shadow-[0_0_10px_rgba(88,166,255,0.2)] hover:bg-cobalt/30 hover:shadow-[0_0_15px_rgba(88,166,255,0.4)] transition-all font-mono text-[10px] md:text-xs uppercase flex items-center gap-2 ${isMobile ? 'p-2' : 'px-4 py-2'}`}
               >
-                [ TERMINATE_SESSION ]
+                <Power className={`${isMobile ? 'w-4 h-4' : 'w-3 h-3'}`} />
+                {!isMobile && <span>[ TERMINATE_SESSION ]</span>}
               </button>
               <SiliconApp />
             </div>

@@ -197,7 +197,7 @@ const TerminalContent = ({ onToggleCinema, onOpenWindow, onMinimizeSelf, isMobil
   };
 
   return (
-    <div className="flex flex-col h-full min-h-[300px]">
+    <div className={`flex flex-col ${isMobile ? 'min-h-[calc(100vh-160px)]' : 'h-full min-h-[300px]'}`}>
       <div className="flex-grow font-mono text-xs overflow-y-auto space-y-1 mb-4 p-2 bg-black/20 rounded">
         {history.map((h, i) => (
           <div key={i} className={h.startsWith('>') ? 'text-cobalt' : 'text-slate-400'}>
@@ -205,7 +205,7 @@ const TerminalContent = ({ onToggleCinema, onOpenWindow, onMinimizeSelf, isMobil
           </div>
         ))}
       </div>
-    <div className="flex flex-col gap-2">
+    <div className={`flex flex-col gap-2 ${isMobile ? 'mt-auto pb-4' : ''}`}>
       {isMobile && (
         <div className="flex flex-col gap-1 mb-2 bg-black/40 p-1.5 rounded-lg border border-cobalt/10">
           {keyboardRows.map((row, rowIdx) => (

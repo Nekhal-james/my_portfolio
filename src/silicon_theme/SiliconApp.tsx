@@ -84,16 +84,23 @@ export default function App() {
     }));
   };
 
+  const lastActivityRef = useRef(Date.now());
+  const activeWindowsRef = useRef(activeWindows);
+
+  useEffect(() => {
+    activeWindowsRef.current = activeWindows;
+  }, [activeWindows]);
+
   // Telemetry Effects
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      setLastActivity(Date.now());
+      lastActivityRef.current = Date.now();
       setTelemetry(prev => ({ ...prev, mousePos: { x: e.clientX, y: e.clientY } }));
     };
     const handleClick = () => {
-      setLastActivity(Date.now());
+      lastActivityRef.current = Date.now();
       setTelemetry(prev => ({ ...prev, clicks: prev.clicks + 1 }));
-      triggerSystemSpike({ cpu: 1.5, net: 1 }); // Subtle click spike
+      triggerSystemSpike({ cpu: 1.5, net: 1 });
     };
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('click', handleClick);
@@ -101,22 +108,13 @@ export default function App() {
     const interval = setInterval(() => {
       setTelemetry(prev => {
         const now = Date.now();
-        const isIdle = (now - lastActivity) > 4000;
+        const isIdle = (now - lastActivityRef.current) > 4000;
+        const windowLoad = activeWindowsRef.current.length * 15; 
         
-        // Dynamic Load Calculation
-        const windowLoad = activeWindows.length * 15; 
-        
-        // 1. CPU: Reacts to mouse speed + window load + random jitter
-        const mouseDelta = Math.abs(prev.mousePos.x - lastActivity) % 10; // Simplified delta proxy
+        const mouseDelta = Math.abs(prev.mousePos.x - lastActivityRef.current) % 10;
         const cpuBase = isIdle ? 15 : 25 + windowLoad + mouseDelta;
-        
-        // 2. RAM: Persistent, scales with windows, slight leak over time
-        const ramBase = 35 + windowLoad + (Math.min(10, prev.elapsed / 60)); // 0.1% leak per minute
-        
-        // 3. DISK: Correlates with Network (writes) + Window Operations
+        const ramBase = 35 + windowLoad + (Math.min(10, prev.elapsed / 60));
         const diskBase = isIdle ? 2 : 5 + (prev.activitySpikes.net * 0.3);
-        
-        // 4. NETWORK: Heartbeat (every 5s) + Active Spikes
         const heartbeat = (now % 5000 < 1000) ? 5 : 0;
         const netBase = isIdle ? heartbeat : 8 + heartbeat;
 
@@ -147,14 +145,14 @@ export default function App() {
           }
         };
       });
-    }, 1000);
+    }, 400);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('click', handleClick);
       clearInterval(interval);
     };
-  }, [lastActivity, activeWindows.length]);
+  }, []);
 
   // Window Timing Logic
   useEffect(() => {
@@ -189,7 +187,7 @@ export default function App() {
            return { ...prev, windowStats: stats };
          });
        }
-     }, 1000);
+     }, 400); 
      return () => clearInterval(interval);
   }, [focusedWindow]);
 
@@ -511,7 +509,7 @@ export default function App() {
         </MissionWindow>
 
         <footer className={`fixed transition-all duration-500 flex items-center z-[100] ${isMobile
-          ? 'bottom-6 left-1/2 -translate-x-1/2 w-[92%] h-[68px] bg-[#00f2ff] rounded-2xl border-2 border-white/60'
+          ? 'bottom-6 left-1/2 -translate-x-1/2 w-[92%] h-[68px] bg-black/60 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl'
           : 'bottom-0 left-0 w-full h-[40px] bg-obsidian/95 backdrop-blur-xl border-t border-cobalt/40 px-5'
           }`}>
           <div className={`flex items-center w-full h-full relative overflow-hidden ${isMobile ? 'px-2' : 'gap-4'}`}>
@@ -536,10 +534,12 @@ export default function App() {
                     onClick={() => handleMenuClick(item.id)}
                     className={`flex flex-col items-center justify-center relative flex-1 h-[85%] gap-0.5 transition-all rounded-xl ${isFocused ? 'shadow-[inner_0_0_10px_rgba(0,0,0,0.05)]' : ''}`}
                   >
-                    <div className={`transition-all duration-300 ${isFocused ? 'text-blue-950 scale-110' : 'text-blue-900/60'}`}>
+                    <div className={`transition-all duration-300 ${isFocused ? 'text-blue-950 scale-110' : (isMobile ? 'text-white/60' : 'text-blue-900/60')}`}>
                       {item.icon}
                     </div>
-                    <span className={`mono text-[9px] font-black uppercase tracking-wider transition-colors ${isFocused ? 'text-blue-950' : 'text-blue-900/50'}`}>
+                    <span className={`mono font-black uppercase tracking-wider transition-colors 
+                      ${isMobile ? 'text-[7px]' : 'text-[9px]'}
+                      ${isFocused ? 'text-blue-950' : (isMobile ? 'text-white/40' : 'text-blue-900/50')}`}>
                       {item.label.split(' ')[0]}
                     </span>
 
@@ -595,9 +595,11 @@ export default function App() {
               })}
             </div>
 
-            <div className="absolute right-0 top-0 h-full flex items-center pr-4 pointer-events-none hidden md:flex">
-              <div className="mono text-[10px] opacity-40">TERMINAL_INPUT: /_</div>
-            </div>
+            {!isMobile && (
+              <div className="absolute right-0 top-0 h-full flex items-center pr-4 pointer-events-none hidden md:flex">
+                <div className="mono text-[10px] opacity-40">TERMINAL_INPUT: /_</div>
+              </div>
+            )}
           </div>
         </footer>
 
@@ -699,8 +701,8 @@ export default function App() {
 
         {/* SYSTEM_INFORMATION_METRICS: FULL TASK MANAGER REPLICATION */}
         {!isMobile && (
-          <div className="fixed right-6 top-20 z-[1000] pointer-events-auto select-none hidden lg:block">
-            <div className="flex flex-col bg-black/60 backdrop-blur-2xl border border-white/10 rounded-sm overflow-hidden shadow-2xl">
+          <div className="fixed right-6 top-20 z-[1000] pointer-events-auto select-none hidden lg:block will-change-transform">
+            <div className="flex flex-col bg-black/60 backdrop-blur-2xl border border-white/10 rounded-sm overflow-hidden shadow-2xl will-change-transform">
                {/* Title Bar */}
                <div className="px-4 py-2 border-b border-white/5 bg-white/[0.03]">
                   <span className="mono text-[10px] font-black text-white/80 uppercase tracking-[0.2em]">Performance_Monitor</span>
@@ -800,8 +802,8 @@ export default function App() {
 }
 
 // Sidebar Thumbnail Item
-function MetricSidebarItem({ label, value, subValue, data, color, isSelected, onClick }: any) {
-  const points = data.map((val: number, i: number) => `${i * 3},${15 - (val / 100) * 15}`).join(' ');
+const MetricSidebarItem = React.memo(({ label, value, subValue, data, color, isSelected, onClick }: any) => {
+  const points = React.useMemo(() => data.map((val: number, i: number) => `${i * 3},${15 - (val / 100) * 15}`).join(' '), [data]);
   return (
     <div 
       onClick={onClick}
@@ -809,7 +811,7 @@ function MetricSidebarItem({ label, value, subValue, data, color, isSelected, on
     >
        <div className="w-12 h-8 bg-black/40 border border-white/5 overflow-hidden">
           <svg className="w-full h-full" viewBox="0 0 60 15" preserveAspectRatio="none">
-             <polyline fill="none" stroke={color} strokeWidth="0.75" points={points} />
+             <polyline fill="none" stroke={color} strokeWidth="0.75" points={points} className="transition-all duration-400 ease-in-out" />
           </svg>
        </div>
        <div className="flex flex-col min-w-0">
@@ -821,19 +823,19 @@ function MetricSidebarItem({ label, value, subValue, data, color, isSelected, on
        </div>
     </div>
   );
-}
+});
 
 // Large Detailed View
-function MetricLargeDetail({ type, data, hardware, color }: any) {
+const MetricLargeDetail = React.memo(({ type, data, hardware, color }: any) => {
   const lastVal = Math.round(data[data.length-1]);
-  const points = data.map((val: number, i: number) => `${i * 5},${40 - (val / 100) * 40}`).join(' ');
+  const points = React.useMemo(() => data.map((val: number, i: number) => `${i * 5},${40 - (val / 100) * 40}`).join(' '), [data]);
   
-  const stats = {
+  const stats = React.useMemo(() => ({
     cpu: { primary: `${(3.2 + (lastVal/25)).toFixed(2)} GHz`, details: { Processes: "482", Threads: "12844", Handles: "245912", Cores: "96", Logical: "192" } },
     ram: { primary: `${(32.4 + (lastVal * 4.8)).toFixed(1)}/512.0 GB`, details: { InUse: "182 GB", Available: "330 GB", Committed: "210 GB", Cached: "64 GB" } },
     disk: { primary: `${lastVal}% Active`, details: { Type: "PCIe 5.0 NVMe", Read: "12.4 GB/s", Write: "8.2 GB/s", Latency: "0.01 ms" } },
     net: { primary: `${(lastVal * 120).toFixed(0)} Mbps`, details: { Interface: "Mellanox CX-7", Protocol: "100GbE", MTU: "9000", DNS: "1.1.1.1" } }
-  }[type as keyof typeof stats];
+  }[type as keyof { cpu: any, ram: any, disk: any, net: any }]), [type, lastVal]);
 
   return (
     <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-right-2 duration-300">
@@ -857,8 +859,8 @@ function MetricLargeDetail({ type, data, hardware, color }: any) {
                }} 
           />
           <svg className="w-full h-full relative z-10" viewBox="0 0 95 40" preserveAspectRatio="none">
-             <polyline fill="none" stroke={color} strokeWidth="1.2" points={points} className="transition-all duration-1000 ease-in-out" />
-             <polyline fill={color} fillOpacity="0.15" points={`0,40 ${points} 95,40`} />
+             <polyline fill="none" stroke={color} strokeWidth="1.2" points={points} className="transition-all duration-400 ease-in-out" />
+             <polyline fill={color} fillOpacity="0.15" points={`0,40 ${points} 95,40`} className="transition-all duration-400 ease-in-out" />
           </svg>
        </div>
 
@@ -879,4 +881,4 @@ function MetricLargeDetail({ type, data, hardware, color }: any) {
        </div>
     </div>
   );
-}
+});
