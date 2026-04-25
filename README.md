@@ -6,7 +6,7 @@
   [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
   [![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)](https://www.framer.com/motion/)
 
-  [Explore the Live Deployment]([https://nekhal.vercel.app/])
+  [Explore the Live Deployment](https://nekhal.vercel.app/)
 </div>
 
 ---
