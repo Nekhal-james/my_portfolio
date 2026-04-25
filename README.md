@@ -43,33 +43,6 @@ A journey through the "Ink and Sketch" side of development.
 
 ---
 
-## 🚀 Installation & Local Node Boot
-
-To run the **Obsidian OS** in your local environment, follow these protocols:
-
-1. **Clone the Source**:
-   ```bash
-   git clone https://github.com/your-repo/narrative-sketchbook-portfolio.git
-   ```
-
-2. **Initialize Dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Configure the Environment**:
-   Create a `.env.local` file and establish your communication link:
-   ```env
-   GEMINI_API_KEY=your_key_here
-   ```
-
-4. **Boot System**:
-   ```bash
-   npm run dev
-   ```
-
----
-
 ## 🌌 The Vision
 > *"Software is the modern ink; the algorithm is the new grammar. We aren't just writing books anymore; we are coding realities."*
 
